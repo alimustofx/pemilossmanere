@@ -347,12 +347,6 @@ onUnmounted(() => {
                         </span>
                     </a>
 
-                    <a
-                        href="#pemilihan"
-                        class="hero__link"
-                    >
-                        Lihat pemilihan
-                    </a>
                 </div>
             </div>
 

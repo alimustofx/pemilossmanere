@@ -50,9 +50,9 @@
 
         </style>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" type="image/svg+xml" href="/images/logosekolah.svg">
 
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <link rel="icon" type="image/svg+xml" href="/images/logosekolah.svg" media="(prefers-color-scheme: light)">
 
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
