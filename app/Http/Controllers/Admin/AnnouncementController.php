@@ -4,19 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class AnnouncementController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('Admin/Announcements/Index', [
             'announcements' => Announcement::latest()->get(),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -39,8 +41,10 @@ class AnnouncementController extends Controller
         return back()->with('success', 'Pengumuman berhasil dibuat.');
     }
 
-    public function update(Request $request, Announcement $announcement)
-    {
+    public function update(
+        Request $request,
+        Announcement $announcement
+    ): RedirectResponse {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
@@ -62,7 +66,7 @@ class AnnouncementController extends Controller
         return back()->with('success', 'Pengumuman berhasil diperbarui.');
     }
 
-    public function destroy(Announcement $announcement)
+    public function destroy(Announcement $announcement): RedirectResponse
     {
         $announcement->delete();
 

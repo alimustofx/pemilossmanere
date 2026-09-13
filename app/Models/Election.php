@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\ElectionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Election extends Model
 {
+    /** @use HasFactory<ElectionFactory> */
     use HasFactory;
 
     protected $fillable = ['name', 'type', 'status', 'starts_at', 'ends_at'];
@@ -16,12 +19,18 @@ class Election extends Model
         'ends_at' => 'datetime',
     ];
 
-    public function candidateGroups()
+    /**
+     * @return HasMany<CandidateGroup, $this>
+     */
+    public function candidateGroups(): HasMany
     {
         return $this->hasMany(CandidateGroup::class);
     }
 
-    public function votes()
+    /**
+     * @return HasMany<Vote, $this>
+     */
+    public function votes(): HasMany
     {
         return $this->hasMany(Vote::class);
     }

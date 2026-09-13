@@ -5,18 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Election;
 use App\Support\AuditLogger;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ElectionController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('Admin/Elections/Index', [
             'elections' => Election::orderBy('type')->get(),
         ]);
     }
 
-    public function open(Election $election)
+    public function open(Election $election): RedirectResponse
     {
         $election->update([
             'status' => 'open',
@@ -28,7 +30,7 @@ class ElectionController extends Controller
         return back()->with('success', "Voting {$election->name} dibuka.");
     }
 
-    public function close(Election $election)
+    public function close(Election $election): RedirectResponse
     {
         $election->update([
             'status' => 'closed',
@@ -40,7 +42,7 @@ class ElectionController extends Controller
         return back()->with('success', "Voting {$election->name} ditutup.");
     }
 
-    public function publish(Election $election)
+    public function publish(Election $election): RedirectResponse
     {
         // Hanya bisa publish kalau election ini closed
         if ($election->status !== 'closed') {

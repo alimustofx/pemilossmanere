@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Announcement;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class PengumumanController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $announcements = Announcement::where('status', 'published')
             ->latest()

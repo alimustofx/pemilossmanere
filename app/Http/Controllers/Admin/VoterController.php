@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Voter;
 use App\Support\AuditLogger;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class VoterController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $perPage = (int) $request->input('per_page', 20);
         $perPage = in_array($perPage, [10, 20, 50, 100]) ? $perPage : 20;
@@ -37,7 +40,7 @@ class VoterController extends Controller
         ]);
     }
 
-    public function import(Request $request)
+    public function import(Request $request): RedirectResponse
     {
         $request->validate([
             'file' => 'required|file|mimes:csv,txt|max:5120',
@@ -45,6 +48,10 @@ class VoterController extends Controller
 
         $path = $request->file('file')->getRealPath();
         $handle = fopen($path, 'r');
+
+        if ($handle === false) {
+            throw new \RuntimeException('Gagal membuka file CSV.');
+        }
 
         $header = fgetcsv($handle); // baris pertama = header, dilewati
         $imported = 0;
@@ -57,7 +64,10 @@ class VoterController extends Controller
                 continue;
             }
 
-            [$nis, $nama, $kelas, $tanggalLahir] = array_map('trim', $row);
+            [$nis, $nama, $kelas, $tanggalLahir] = array_map(
+                static fn (?string $value): string => trim($value ?? ''),
+                $row
+            );
 
             if (empty($nis) || empty($nama) || empty($kelas) || empty($tanggalLahir)) {
                 $skipped++;
@@ -90,12 +100,17 @@ class VoterController extends Controller
         );
     }
 
-    public function export()
+    public function export(): StreamedResponse
     {
         $voters = Voter::orderBy('class_name')->orderBy('name')->get();
 
-        $callback = function () use ($voters) {
+        $callback = function () use ($voters): void {
             $file = fopen('php://output', 'w');
+
+            if ($file === false) {
+                throw new \RuntimeException('Gagal membuka output CSV.');
+            }
+
             fputcsv($file, ['NIS', 'Nama', 'Kelas', 'Status', 'OSIS Voted', 'MPK Voted']);
 
             foreach ($voters as $v) {
@@ -112,10 +127,14 @@ class VoterController extends Controller
             fclose($file);
         };
 
-        return response()->streamDownload($callback, 'rekap-pemilih.csv', ['Content-Type' => 'text/csv']);
+        return response()->streamDownload(
+            $callback,
+            'rekap-pemilih.csv',
+            ['Content-Type' => 'text/csv']
+        );
     }
 
-    public function toggleStatus(Voter $voter)
+    public function toggleStatus(Voter $voter): RedirectResponse
     {
         $voter->update([
             'status' => ! $voter->status,
@@ -129,7 +148,7 @@ class VoterController extends Controller
         return back();
     }
 
-    public function destroy(Voter $voter)
+    public function destroy(Voter $voter): RedirectResponse
     {
         AuditLogger::log("Menghapus pemilih: {$voter->name} ({$voter->nis})");
 

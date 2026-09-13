@@ -4,20 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Voter;
 use App\Models\VoterSession;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class VoteAccessController extends Controller
 {
-    public function show()
+    public function show(): Response
     {
         return Inertia::render('Vote/Access');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'class_name' => 'required|string',

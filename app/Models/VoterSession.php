@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VoterSession extends Model
 {
@@ -13,7 +14,10 @@ class VoterSession extends Model
         'last_activity_at' => 'datetime',
     ];
 
-    public function voter()
+    /**
+     * @return BelongsTo<Voter, $this>
+     */
+    public function voter(): BelongsTo
     {
         return $this->belongsTo(Voter::class);
     }

@@ -8,12 +8,14 @@ use App\Models\CandidateGroup;
 use App\Models\CandidateProgram;
 use App\Models\Election;
 use App\Support\AuditLogger;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class CandidateGroupController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $groups = CandidateGroup::with(['election', 'candidates', 'programs'])
             ->orderBy('election_id')
@@ -26,7 +28,7 @@ class CandidateGroupController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'election_id' => 'required|exists:elections,id',
@@ -95,8 +97,10 @@ class CandidateGroupController extends Controller
             ->with('success', 'Kandidat berhasil ditambahkan.');
     }
 
-    public function update(Request $request, CandidateGroup $candidateGroup)
-    {
+    public function update(
+        Request $request,
+        CandidateGroup $candidateGroup
+    ): RedirectResponse {
         $validated = $request->validate([
             'nomor_urut' => 'required|integer|min:1',
             'nama_kelompok' => 'required|string|max:255',
@@ -178,7 +182,7 @@ class CandidateGroupController extends Controller
             ->with('success', 'Kandidat berhasil diperbarui.');
     }
 
-    public function destroy(CandidateGroup $candidateGroup)
+    public function destroy(CandidateGroup $candidateGroup): RedirectResponse
     {
         AuditLogger::log(
             "Menghapus kandidat: {$candidateGroup->nama_kelompok}"

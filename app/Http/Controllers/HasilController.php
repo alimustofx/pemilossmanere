@@ -6,10 +6,11 @@ use App\Models\Election;
 use App\Models\Vote;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class HasilController extends Controller
 {
-    public function show(Request $request, string $type)
+    public function show(Request $request, string $type): Response
     {
         $election = Election::where('type', $type)->firstOrFail();
 

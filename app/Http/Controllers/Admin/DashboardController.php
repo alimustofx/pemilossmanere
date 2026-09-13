@@ -6,11 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Election;
 use App\Models\Vote;
 use App\Models\Voter;
+use Illuminate\Database\Eloquent\Collection;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(): InertiaResponse
     {
         $totalVoters = Voter::where('status', true)->count();
 
@@ -53,24 +56,38 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function exportResults()
+    public function exportResults(): StreamedResponse
     {
+        /** @var Collection<int, Vote> $data */
         $data = Vote::selectRaw('election_id, candidate_group_id, count(*) as total')
             ->groupBy('election_id', 'candidate_group_id')
             ->with(['election:id,name,type', 'candidateGroup:id,nama_kelompok'])
             ->get();
 
-        $callback = function () use ($data) {
+        $callback = function () use ($data): void {
             $file = fopen('php://output', 'w');
+
+            if ($file === false) {
+                throw new \RuntimeException('Gagal membuka output CSV.');
+            }
+
             fputcsv($file, ['Pemilihan', 'Kandidat', 'Total Suara']);
 
             foreach ($data as $row) {
-                fputcsv($file, [$row->election->name, $row->candidateGroup->nama_kelompok, $row->total]);
+                fputcsv($file, [
+                    $row->election->name,
+                    $row->candidateGroup->nama_kelompok,
+                    (int) $row->getAttribute('total'),
+                ]);
             }
 
             fclose($file);
         };
 
-        return response()->streamDownload($callback, 'rekap-hasil.csv', ['Content-Type' => 'text/csv']);
+        return response()->streamDownload(
+            $callback,
+            'rekap-hasil.csv',
+            ['Content-Type' => 'text/csv']
+        );
     }
 }

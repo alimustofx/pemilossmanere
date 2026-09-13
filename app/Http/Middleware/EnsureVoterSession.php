@@ -13,7 +13,7 @@ class EnsureVoterSession
     {
         $rawToken = $request->cookie('voter_session');
 
-        if (! $rawToken) {
+        if (! is_string($rawToken) || $rawToken === '') {
             return redirect()->route('vote.access');
         }
 

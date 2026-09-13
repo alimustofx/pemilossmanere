@@ -28,6 +28,9 @@ class VoteRecorded implements ShouldBroadcast
         return 'vote.recorded';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function broadcastWith(): array
     {
         $results = Vote::where('election_id', $this->election->id)
