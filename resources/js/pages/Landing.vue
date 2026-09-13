@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 const props = defineProps({
     elections: {
@@ -11,7 +11,7 @@ const props = defineProps({
         type: Object,
         default: null,
     },
-})
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -19,19 +19,19 @@ const props = defineProps({
 |--------------------------------------------------------------------------
 */
 
-const menuOpen = ref(false)
+const menuOpen = ref(false);
 
 function toggleMenu() {
-    menuOpen.value = !menuOpen.value
+    menuOpen.value = !menuOpen.value;
 }
 
 function closeMenu() {
-    menuOpen.value = false
+    menuOpen.value = false;
 }
 
 function handleEscape(event) {
     if (event.key === 'Escape') {
-        closeMenu()
+        closeMenu();
     }
 }
 
@@ -46,14 +46,12 @@ const heroSlides = [
     '/images/candidate-2.svg',
     '/images/candidate-3.svg',
     '/images/candidate-4.svg',
-    '/images/candidate-5.svg',
-    '/images/candidate-6.svg',
-]
+];
 
-const activeSlide = ref(0)
-const ready = ref(false)
+const activeSlide = ref(0);
+const ready = ref(false);
 
-let slideInterval = null
+let slideInterval = null;
 
 const statusLabel = {
     draft: 'Belum dimulai',
@@ -61,41 +59,41 @@ const statusLabel = {
     open: 'Sedang berlangsung',
     closed: 'Ditutup',
     result_published: 'Hasil diumumkan',
-}
+};
 
 const typeLabel = {
     osis: 'Ketua & Wakil Ketua OSIS',
     mpk: 'Ketua & Wakil Ketua MPK',
-}
+};
 
 const currentSlide = computed(() => {
-    return heroSlides[activeSlide.value]
-})
+    return heroSlides[activeSlide.value];
+});
 
 const announcementImage = computed(() => {
     if (!props.latestAnnouncement?.image) {
-        return null
+        return null;
     }
 
-    return `/storage/${props.latestAnnouncement.image}`
-})
+    return `/storage/${props.latestAnnouncement.image}`;
+});
 
 const announcementExcerpt = computed(() => {
-    const content = props.latestAnnouncement?.content ?? ''
+    const content = props.latestAnnouncement?.content ?? '';
 
     if (content.length <= 180) {
-        return content
+        return content;
     }
 
-    return `${content.substring(0, 180).trim()}…`
-})
+    return `${content.substring(0, 180).trim()}…`;
+});
 
 onMounted(() => {
-    window.addEventListener('keydown', handleEscape)
+    window.addEventListener('keydown', handleEscape);
 
     requestAnimationFrame(() => {
-        ready.value = true
-    })
+        ready.value = true;
+    });
 
     /*
      * Ganti foto setiap 5 detik.
@@ -103,59 +101,39 @@ onMounted(() => {
      */
     if (heroSlides.length > 1) {
         slideInterval = window.setInterval(() => {
-            activeSlide.value =
-                (activeSlide.value + 1) % heroSlides.length
-        }, 5000)
+            activeSlide.value = (activeSlide.value + 1) % heroSlides.length;
+        }, 5000);
     }
-})
+});
 
 onUnmounted(() => {
-    window.removeEventListener('keydown', handleEscape)
+    window.removeEventListener('keydown', handleEscape);
 
     if (slideInterval) {
-        window.clearInterval(slideInterval)
-        slideInterval = null
+        window.clearInterval(slideInterval);
+        slideInterval = null;
     }
-})
+});
 </script>
 
 <template>
     <div class="page">
-
         <!-- =====================================================
              NAVIGATION
         ====================================================== -->
         <header class="nav">
-
             <!-- LOGO -->
-            <a
-                href="/"
-                class="nav__logo"
-                @click="closeMenu"
-            >
-                Pemilos
-            </a>
+            <a href="/" class="nav__logo" @click="closeMenu"> Pemilos </a>
 
             <!-- DESKTOP NAVIGATION -->
             <nav class="nav__links">
-                <a href="/pengumuman">
-                    Pengumuman
-                </a>
+                <a href="/pengumuman"> Pengumuman </a>
 
-                <a href="/hasil/osis">
-                    Hasil OSIS
-                </a>
+                <a href="/hasil/osis"> Hasil OSIS </a>
 
-                <a href="/hasil/mpk">
-                    Hasil MPK
-                </a>
+                <a href="/hasil/mpk"> Hasil MPK </a>
 
-                <a
-                    href="/vote/access"
-                    class="nav__cta"
-                >
-                    Mulai memilih
-                </a>
+                <a href="/vote/access" class="nav__cta"> Mulai memilih </a>
             </nav>
 
             <!-- HAMBURGER BUTTON -->
@@ -172,9 +150,7 @@ onUnmounted(() => {
                     <span></span>
                 </span>
 
-                <span class="nav__menu-label">
-                    Menu
-                </span>
+                <span class="nav__menu-label"> Menu </span>
             </button>
         </header>
 
@@ -182,11 +158,7 @@ onUnmounted(() => {
              MOBILE / TABLET MENU
         ====================================================== -->
         <Transition name="menu">
-            <div
-                v-if="menuOpen"
-                class="mobile-menu"
-            >
-
+            <div v-if="menuOpen" class="mobile-menu">
                 <!-- OVERLAY -->
                 <button
                     type="button"
@@ -197,12 +169,9 @@ onUnmounted(() => {
 
                 <!-- MENU PANEL -->
                 <nav class="mobile-menu__panel">
-
                     <!-- MENU HEADER -->
                     <div class="mobile-menu__top">
-                        <span>
-                            Navigasi
-                        </span>
+                        <span> Navigasi </span>
 
                         <button
                             type="button"
@@ -217,56 +186,28 @@ onUnmounted(() => {
 
                     <!-- MENU LINKS -->
                     <div class="mobile-menu__links">
+                        <a href="/pengumuman" @click="closeMenu">
+                            <span class="mobile-menu__number"> 01 </span>
 
-                        <a
-                            href="/pengumuman"
-                            @click="closeMenu"
-                        >
-                            <span class="mobile-menu__number">
-                                01
-                            </span>
+                            <span class="mobile-menu__text"> Pengumuman </span>
 
-                            <span class="mobile-menu__text">
-                                Pengumuman
-                            </span>
-
-                            <span class="mobile-menu__arrow">
-                                ↗
-                            </span>
+                            <span class="mobile-menu__arrow"> ↗ </span>
                         </a>
 
-                        <a
-                            href="/hasil/osis"
-                            @click="closeMenu"
-                        >
-                            <span class="mobile-menu__number">
-                                02
-                            </span>
+                        <a href="/hasil/osis" @click="closeMenu">
+                            <span class="mobile-menu__number"> 02 </span>
 
-                            <span class="mobile-menu__text">
-                                Hasil OSIS
-                            </span>
+                            <span class="mobile-menu__text"> Hasil OSIS </span>
 
-                            <span class="mobile-menu__arrow">
-                                ↗
-                            </span>
+                            <span class="mobile-menu__arrow"> ↗ </span>
                         </a>
 
-                        <a
-                            href="/hasil/mpk"
-                            @click="closeMenu"
-                        >
-                            <span class="mobile-menu__number">
-                                03
-                            </span>
+                        <a href="/hasil/mpk" @click="closeMenu">
+                            <span class="mobile-menu__number"> 03 </span>
 
-                            <span class="mobile-menu__text">
-                                Hasil MPK
-                            </span>
+                            <span class="mobile-menu__text"> Hasil MPK </span>
 
-                            <span class="mobile-menu__arrow">
-                                ↗
-                            </span>
+                            <span class="mobile-menu__arrow"> ↗ </span>
                         </a>
 
                         <a
@@ -274,29 +215,21 @@ onUnmounted(() => {
                             class="mobile-menu__vote"
                             @click="closeMenu"
                         >
-                            <span class="mobile-menu__number">
-                                04
-                            </span>
+                            <span class="mobile-menu__number"> 04 </span>
 
                             <span class="mobile-menu__text">
                                 Mulai memilih
                             </span>
 
-                            <span class="mobile-menu__arrow">
-                                ↗
-                            </span>
+                            <span class="mobile-menu__arrow"> ↗ </span>
                         </a>
                     </div>
 
                     <!-- MENU FOOTER -->
                     <div class="mobile-menu__footer">
-                        <span>
-                            Pemilos 2026/2027
-                        </span>
+                        <span> Pemilos 2026/2027 </span>
 
-                        <span>
-                            OSIS &amp; MPK
-                        </span>
+                        <span> OSIS &amp; MPK </span>
                     </div>
                 </nav>
             </div>
@@ -305,20 +238,13 @@ onUnmounted(() => {
         <!-- =====================================================
              HERO
         ====================================================== -->
-        <section
-            class="hero"
-            :class="{ 'is-ready': ready }"
-        >
-
+        <section class="hero" :class="{ 'is-ready': ready }">
             <!-- LEFT -->
             <div class="hero__content">
-
                 <p class="hero__eyebrow">
                     Pemilihan OSIS & MPK
 
-                    <span>
-                        2026/2027
-                    </span>
+                    <span> 2026/2027 </span>
                 </p>
 
                 <h1 class="hero__title">
@@ -329,32 +255,22 @@ onUnmounted(() => {
 
                 <p class="hero__desc">
                     Masukkan kelas, NIS, dan tanggal lahir untuk memilih.
-                    Prosesnya kurang dari dua menit, dan pilihanmu tetap rahasia.
+                    Prosesnya kurang dari dua menit, dan pilihanmu tetap
+                    rahasia.
                 </p>
 
                 <div class="hero__actions">
+                    <a href="/vote/access" class="hero__cta">
+                        <span> Mulai memilih </span>
 
-                    <a
-                        href="/vote/access"
-                        class="hero__cta"
-                    >
-                        <span>
-                            Mulai memilih
-                        </span>
-
-                        <span class="hero__cta-arrow">
-                            ↗
-                        </span>
+                        <span class="hero__cta-arrow"> ↗ </span>
                     </a>
-
                 </div>
             </div>
 
             <!-- RIGHT / PHOTO SLIDESHOW -->
             <div class="hero__visual">
-
                 <div class="hero__photo">
-
                     <Transition name="photo-fade">
                         <img
                             :key="currentSlide"
@@ -362,13 +278,10 @@ onUnmounted(() => {
                             :alt="`Foto kandidat ${activeSlide + 1}`"
                         />
                     </Transition>
-
                 </div>
 
                 <div class="hero__photo-caption">
-                    <span>
-                        Pemilos 2026/2027
-                    </span>
+                    <span> Pemilos 2026/2027 </span>
 
                     <span>
                         {{ String(activeSlide + 1).padStart(2, '0') }}
@@ -382,11 +295,7 @@ onUnmounted(() => {
         <!-- =====================================================
              CURRENT STATUS
         ====================================================== -->
-        <section
-            v-if="elections?.length"
-            class="ballot"
-            id="pemilihan"
-        >
+        <section v-if="elections?.length" class="ballot" id="pemilihan">
             <div
                 v-for="(election, i) in elections"
                 :key="election.id"
@@ -420,36 +329,21 @@ onUnmounted(() => {
         <!-- =====================================================
              ANNOUNCEMENT
         ====================================================== -->
-        <section
-            v-if="latestAnnouncement"
-            class="announce"
-        >
+        <section v-if="latestAnnouncement" class="announce">
             <div class="announce__heading">
-
                 <div>
-                    <span class="announce__number">
-                        02
-                    </span>
+                    <span class="announce__number"> 02 </span>
 
-                    <h2>
-                        Pengumuman
-                    </h2>
+                    <h2>Pengumuman</h2>
                 </div>
 
-                <a
-                    href="/pengumuman"
-                    class="announce__all"
-                >
+                <a href="/pengumuman" class="announce__all">
                     Semua pengumuman
                 </a>
             </div>
 
             <article class="announce__body">
-
-                <div
-                    v-if="announcementImage"
-                    class="announce__img-wrapper"
-                >
+                <div v-if="announcementImage" class="announce__img-wrapper">
                     <img
                         :src="announcementImage"
                         :alt="latestAnnouncement.title"
@@ -458,10 +352,7 @@ onUnmounted(() => {
                 </div>
 
                 <div class="announce__content">
-
-                    <span class="announce__label">
-                        Pengumuman terbaru
-                    </span>
+                    <span class="announce__label"> Pengumuman terbaru </span>
 
                     <h3 class="announce__title">
                         {{ latestAnnouncement.title }}
@@ -471,15 +362,10 @@ onUnmounted(() => {
                         {{ announcementExcerpt }}
                     </p>
 
-                    <a
-                        href="/pengumuman"
-                        class="announce__link"
-                    >
+                    <a href="/pengumuman" class="announce__link">
                         Baca selengkapnya
 
-                        <span>
-                            ↗
-                        </span>
+                        <span> ↗ </span>
                     </a>
                 </div>
             </article>
@@ -489,16 +375,10 @@ onUnmounted(() => {
              FINAL CTA
         ====================================================== -->
         <section class="closing">
-
-            <span class="closing__number">
-                03
-            </span>
+            <span class="closing__number"> 03 </span>
 
             <div class="closing__content">
-
-                <p class="closing__eyebrow">
-                    Hak suara
-                </p>
+                <p class="closing__eyebrow">Hak suara</p>
 
                 <h2>
                     Pilih dengan
@@ -506,19 +386,14 @@ onUnmounted(() => {
                 </h2>
 
                 <p>
-                    Luangkan waktu untuk mengenal pilihanmu.
-                    Kemudian gunakan hak suara dengan bertanggung jawab.
+                    Luangkan waktu untuk mengenal pilihanmu. Kemudian gunakan
+                    hak suara dengan bertanggung jawab.
                 </p>
 
-                <a
-                    href="/vote/access"
-                    class="closing__cta"
-                >
+                <a href="/vote/access" class="closing__cta">
                     Mulai memilih
 
-                    <span>
-                        ↗
-                    </span>
+                    <span> ↗ </span>
                 </a>
             </div>
         </section>
@@ -527,9 +402,7 @@ onUnmounted(() => {
              FOOTER
         ====================================================== -->
         <footer class="footer">
-            <span>
-                Panitia Pemilihan OSIS &amp; MPK
-            </span>
+            <span> Panitia Pemilihan OSIS &amp; MPK </span>
 
             <span>
                 {{ new Date().getFullYear() }}
@@ -539,7 +412,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-
 /* =========================================================
    ROOT
 ========================================================= */
@@ -559,11 +431,7 @@ onUnmounted(() => {
     background: var(--paper);
     color: var(--ink);
 
-    font-family:
-        'Inter',
-        'Plus Jakarta Sans',
-        system-ui,
-        sans-serif;
+    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
 
     -webkit-font-smoothing: antialiased;
 }
@@ -577,7 +445,6 @@ onUnmounted(() => {
 .page a {
     -webkit-tap-highlight-color: transparent;
 }
-
 
 /* =========================================================
    NAV
@@ -597,10 +464,7 @@ onUnmounted(() => {
 .nav__logo {
     color: var(--ink);
 
-    font-family:
-        'Fraunces',
-        Georgia,
-        serif;
+    font-family: 'Fraunces', Georgia, serif;
 
     font-size: 20px;
     font-weight: 600;
@@ -670,7 +534,6 @@ onUnmounted(() => {
     color: var(--paper) !important;
 }
 
-
 /* =========================================================
    HAMBURGER BUTTON
 ========================================================= */
@@ -737,7 +600,6 @@ onUnmounted(() => {
     transform: translateY(-3px) rotate(-45deg);
 }
 
-
 /* =========================================================
    MOBILE / TABLET MENU
 ========================================================= */
@@ -783,8 +645,7 @@ onUnmounted(() => {
 
     border-left: 1px solid var(--line);
 
-    box-shadow:
-        -20px 0 50px rgba(24, 23, 22, 0.08);
+    box-shadow: -20px 0 50px rgba(24, 23, 22, 0.08);
 }
 
 .mobile-menu__top {
@@ -885,19 +746,13 @@ onUnmounted(() => {
 .mobile-menu__number {
     color: var(--ink-faint);
 
-    font-family:
-        'Fraunces',
-        Georgia,
-        serif;
+    font-family: 'Fraunces', Georgia, serif;
 
     font-size: 13px;
 }
 
 .mobile-menu__text {
-    font-family:
-        'Fraunces',
-        Georgia,
-        serif;
+    font-family: 'Fraunces', Georgia, serif;
 
     font-size: 26px;
     font-weight: 500;
@@ -962,7 +817,6 @@ onUnmounted(() => {
     text-transform: uppercase;
 }
 
-
 /* =========================================================
    MENU TRANSITION
 ========================================================= */
@@ -974,8 +828,7 @@ onUnmounted(() => {
 
 .menu-enter-active .mobile-menu__panel,
 .menu-leave-active .mobile-menu__panel {
-    transition:
-        transform 300ms cubic-bezier(.22, 1, .36, 1);
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .menu-enter-from,
@@ -987,7 +840,6 @@ onUnmounted(() => {
 .menu-leave-to .mobile-menu__panel {
     transform: translateX(100%);
 }
-
 
 /* =========================================================
    HERO
@@ -1016,7 +868,6 @@ onUnmounted(() => {
 .hero__content {
     max-width: 650px;
 }
-
 
 /* =========================================================
    HERO TEXT
@@ -1048,10 +899,7 @@ onUnmounted(() => {
 
     margin: 0;
 
-    font-family:
-        'Fraunces',
-        Georgia,
-        serif;
+    font-family: 'Fraunces', Georgia, serif;
 
     font-size: clamp(48px, 6vw, 78px);
 
@@ -1154,7 +1002,6 @@ onUnmounted(() => {
     border-color: var(--ink);
 }
 
-
 /* =========================================================
    HERO PHOTO SLIDESHOW
 ========================================================= */
@@ -1170,8 +1017,8 @@ onUnmounted(() => {
     transform: translateY(15px);
 
     transition:
-        opacity 700ms cubic-bezier(.22, 1, .36, 1),
-        transform 700ms cubic-bezier(.22, 1, .36, 1);
+        opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .hero__photo {
@@ -1203,7 +1050,6 @@ onUnmounted(() => {
     will-change: opacity, transform;
 }
 
-
 /* =========================================================
    PHOTO TRANSITION
 ========================================================= */
@@ -1211,8 +1057,8 @@ onUnmounted(() => {
 .photo-fade-enter-active,
 .photo-fade-leave-active {
     transition:
-        opacity 700ms cubic-bezier(.22, 1, .36, 1),
-        transform 900ms cubic-bezier(.22, 1, .36, 1);
+        opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .photo-fade-enter-from {
@@ -1239,7 +1085,6 @@ onUnmounted(() => {
     transform: scale(0.99);
 }
 
-
 /* =========================================================
    PHOTO CAPTION
 ========================================================= */
@@ -1264,45 +1109,24 @@ onUnmounted(() => {
     text-transform: uppercase;
 }
 
-
 /* =========================================================
    HERO ENTRANCE
 ========================================================= */
 
 .hero.is-ready .hero__eyebrow {
-    animation:
-        rise
-        600ms
-        cubic-bezier(.22, 1, .36, 1)
-        0.05s
-        forwards;
+    animation: rise 600ms cubic-bezier(0.22, 1, 0.36, 1) 0.05s forwards;
 }
 
 .hero.is-ready .hero__title {
-    animation:
-        rise
-        650ms
-        cubic-bezier(.22, 1, .36, 1)
-        0.12s
-        forwards;
+    animation: rise 650ms cubic-bezier(0.22, 1, 0.36, 1) 0.12s forwards;
 }
 
 .hero.is-ready .hero__desc {
-    animation:
-        rise
-        650ms
-        cubic-bezier(.22, 1, .36, 1)
-        0.22s
-        forwards;
+    animation: rise 650ms cubic-bezier(0.22, 1, 0.36, 1) 0.22s forwards;
 }
 
 .hero.is-ready .hero__actions {
-    animation:
-        rise
-        650ms
-        cubic-bezier(.22, 1, .36, 1)
-        0.32s
-        forwards;
+    animation: rise 650ms cubic-bezier(0.22, 1, 0.36, 1) 0.32s forwards;
 }
 
 .hero.is-ready .hero__visual {
@@ -1318,7 +1142,6 @@ onUnmounted(() => {
         transform: translateY(0);
     }
 }
-
 
 /* =========================================================
    BALLOT
@@ -1364,10 +1187,7 @@ onUnmounted(() => {
 .ballot__num {
     color: var(--ink-faint);
 
-    font-family:
-        'Fraunces',
-        Georgia,
-        serif;
+    font-family: 'Fraunces', Georgia, serif;
 
     font-size: 17px;
 }
@@ -1390,10 +1210,7 @@ onUnmounted(() => {
 }
 
 .ballot__name {
-    font-family:
-        'Fraunces',
-        Georgia,
-        serif;
+    font-family: 'Fraunces', Georgia, serif;
 
     font-size: 23px;
     font-weight: 500;
@@ -1442,7 +1259,6 @@ onUnmounted(() => {
     background: #8b7144;
 }
 
-
 /* =========================================================
    ANNOUNCEMENT
 ========================================================= */
@@ -1484,10 +1300,7 @@ onUnmounted(() => {
 .announce__heading h2 {
     margin: 0;
 
-    font-family:
-        'Fraunces',
-        Georgia,
-        serif;
+    font-family: 'Fraunces', Georgia, serif;
 
     font-size: 34px;
     font-weight: 600;
@@ -1574,10 +1387,7 @@ onUnmounted(() => {
 
     margin: 0;
 
-    font-family:
-        'Fraunces',
-        Georgia,
-        serif;
+    font-family: 'Fraunces', Georgia, serif;
 
     font-size: clamp(30px, 4vw, 46px);
 
@@ -1617,7 +1427,6 @@ onUnmounted(() => {
 
     padding-bottom: 3px;
 }
-
 
 /* =========================================================
    CLOSING
@@ -1669,10 +1478,7 @@ onUnmounted(() => {
 .closing h2 {
     margin: 0;
 
-    font-family:
-        'Fraunces',
-        Georgia,
-        serif;
+    font-family: 'Fraunces', Georgia, serif;
 
     font-size: clamp(40px, 5vw, 62px);
 
@@ -1734,7 +1540,6 @@ onUnmounted(() => {
     font-size: 17px;
 }
 
-
 /* =========================================================
    FOOTER
 ========================================================= */
@@ -1761,13 +1566,11 @@ onUnmounted(() => {
     text-transform: uppercase;
 }
 
-
 /* =========================================================
    TABLET
 ========================================================= */
 
 @media (max-width: 900px) {
-
     /* HIDE DESKTOP NAV */
     .nav__links {
         display: none;
@@ -1812,13 +1615,11 @@ onUnmounted(() => {
     }
 }
 
-
 /* =========================================================
    MOBILE
 ========================================================= */
 
 @media (max-width: 680px) {
-
     .nav {
         width: calc(100% - 32px);
 
@@ -1836,10 +1637,7 @@ onUnmounted(() => {
     .mobile-menu__panel {
         width: min(430px, 92vw);
 
-        padding:
-            22px
-            22px
-            25px;
+        padding: 22px 22px 25px;
     }
 
     .mobile-menu__text {
@@ -2025,13 +1823,11 @@ onUnmounted(() => {
     }
 }
 
-
 /* =========================================================
    SMALL MOBILE
 ========================================================= */
 
 @media (max-width: 390px) {
-
     .hero {
         padding-top: 48px;
     }
@@ -2061,13 +1857,11 @@ onUnmounted(() => {
     }
 }
 
-
 /* =========================================================
    REDUCED MOTION
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-
     .hero__eyebrow,
     .hero__title,
     .hero__desc,

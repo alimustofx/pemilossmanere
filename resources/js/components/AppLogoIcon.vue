@@ -9,9 +9,5 @@ defineProps<Props>();
 </script>
 
 <template>
-    <img
-        src="/images/logosekolah.svg"
-        alt="Logo Sekolah"
-        :class="className"
-    />
+    <img src="/images/logosekolah.svg" alt="Logo Sekolah" :class="className" />
 </template>

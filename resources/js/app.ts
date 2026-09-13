@@ -19,7 +19,7 @@ void createInertiaApp({
         switch (true) {
             case name === 'Welcome':
                 return null;
-            
+
             case name === 'Landing':
                 return null;
 
@@ -34,10 +34,9 @@ void createInertiaApp({
 
             case name.startsWith('Vote/'):
                 return null;
-            
+
             case name.startsWith('Hasil'):
                 return null;
-                
 
             default:
                 return AppLayout;

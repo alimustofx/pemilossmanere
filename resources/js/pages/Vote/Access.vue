@@ -1,485 +1,468 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { Head, useForm } from '@inertiajs/vue3';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const form = useForm({
-  class_name: '',
-  nis: '',
-  tanggal_lahir: '',
-})
+    class_name: '',
+    nis: '',
+    tanggal_lahir: '',
+});
 
-const menuOpen = ref(false)
+const menuOpen = ref(false);
 
-const kelas = [
-  ...Array.from({ length: 12 }, (_, i) => `X-${String.fromCharCode(65 + i)}`),
-  ...Array.from({ length: 12 }, (_, i) => `XI-${String.fromCharCode(65 + i)}`),
-  ...Array.from({ length: 12 }, (_, i) => `XII-${String.fromCharCode(65 + i)}`),
-]
+// ---------- OPSI KELAS / STATUS ----------
+const kelasSiswa = [
+    ...Array.from({ length: 12 }, (_, i) => `X-${String.fromCharCode(65 + i)}`),
+    ...Array.from(
+        { length: 12 },
+        (_, i) => `XI-${String.fromCharCode(65 + i)}`,
+    ),
+    ...Array.from(
+        { length: 12 },
+        (_, i) => `XII-${String.fromCharCode(65 + i)}`,
+    ),
+];
+
+const kategoriNonSiswa = ['GTK ASN', 'GTK NON ASN', 'MAHASISWA'];
+
+// ---------- LABEL & PLACEHOLDER NOMOR IDENTITAS (dinamis) ----------
+const idFieldConfig = {
+    'GTK ASN': {
+        label: 'Nomor Induk Pegawai (NIP)',
+        placeholder: 'Masukkan NIP',
+        helper: 'Gunakan NIP sesuai data kepegawaian ASN.',
+    },
+    'GTK NON ASN': {
+        label: 'NPSN + Kode Urut Kepegawaian',
+        placeholder: 'Contoh: 20517737-63',
+        helper: 'Gabungkan NPSN sekolah dan kode urut kepegawaian, dipisah tanda "-".',
+    },
+    MAHASISWA: {
+        label: 'Nomor Induk Mahasiswa (NIM)',
+        placeholder: 'Masukkan NIM',
+        helper: 'Gunakan NIM sesuai kartu tanda mahasiswa PPL/PLP.',
+    },
+};
+
+const defaultIdConfig = {
+    label: 'Nomor Induk Siswa (NIS)',
+    placeholder: 'Masukkan NIS',
+    helper: 'Gunakan NIS yang tercatat di data sekolah.',
+};
+
+const idConfig = computed(
+    () => idFieldConfig[form.class_name] ?? defaultIdConfig,
+);
+const isNonSiswa = computed(() => kategoriNonSiswa.includes(form.class_name));
 
 function submit() {
-  form.post('/vote/access')
+    form.post('/vote/access');
 }
 
 function toggleMenu() {
-  menuOpen.value = !menuOpen.value
+    menuOpen.value = !menuOpen.value;
 }
 
 function closeMenu() {
-  menuOpen.value = false
+    menuOpen.value = false;
 }
 
 function handleKeydown(event) {
-  if (event.key === 'Escape') {
-    menuOpen.value = false
-  }
+    if (event.key === 'Escape') {
+        menuOpen.value = false;
+    }
 }
 
 onMounted(() => {
-  window.addEventListener('keydown', handleKeydown)
-})
+    window.addEventListener('keydown', handleKeydown);
+});
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown)
-})
+    window.removeEventListener('keydown', handleKeydown);
+});
 </script>
 
 <template>
-  <Head title="Mulai Memilih — Pemilos" />
+    <Head title="Mulai Memilih — Pemilos" />
 
-  <div class="page">
-    <!-- =====================================================
-         NAVIGATION
-    ====================================================== -->
-    <header class="nav">
-      <a href="/" class="nav__logo" @click="closeMenu">
-        Pemilos
-      </a>
+    <div class="page">
+        <!-- NAVIGATION -->
+        <header class="nav">
+            <a href="/" class="nav__logo" @click="closeMenu">Pemilos</a>
 
-      <div class="nav__right">
-        <a
-          href="/"
-          class="nav__back"
-          @click="closeMenu"
-        >
-        </a>
+            <div class="nav__right">
+                <a href="/" class="nav__back" @click="closeMenu"></a>
 
-        <!-- HAMBURGER -->
-        <button
-          type="button"
-          class="nav__menu-button"
-          :class="{ 'is-open': menuOpen }"
-          :aria-expanded="menuOpen"
-          aria-label="Buka menu navigasi"
-          @click="toggleMenu"
-        >
-          <span class="nav__menu-label">
-            Menu
-          </span>
-
-          <span class="nav__hamburger">
-            <span></span>
-            <span></span>
-          </span>
-        </button>
-      </div>
-
-      <!-- MENU PANEL -->
-      <Transition name="menu-fade">
-        <div
-          v-if="menuOpen"
-          class="nav__menu"
-        >
-          <div class="nav__menu-header">
-            <span>Navigasi</span>
-
-            <button
-              type="button"
-              class="nav__menu-close"
-              aria-label="Tutup menu"
-              @click="closeMenu"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-              >
-                <path d="M6 6l12 12M18 6L6 18" />
-              </svg>
-            </button>
-          </div>
-
-          <nav class="nav__menu-links">
-            <a
-              href="/"
-              class="nav__menu-link"
-              @click="closeMenu"
-            >
-              <span class="nav__menu-number">01</span>
-
-              <span class="nav__menu-text">
-                Beranda
-              </span>
-
-              <span class="nav__menu-arrow">↗</span>
-            </a>
-
-            <a
-              href="/pengumuman"
-              class="nav__menu-link"
-              @click="closeMenu"
-            >
-              <span class="nav__menu-number">02</span>
-
-              <span class="nav__menu-text">
-                Pengumuman
-              </span>
-
-              <span class="nav__menu-arrow">↗</span>
-            </a>
-
-            <a
-              href="/hasil/osis"
-              class="nav__menu-link"
-              @click="closeMenu"
-            >
-              <span class="nav__menu-number">03</span>
-
-              <span class="nav__menu-text">
-                Hasil OSIS
-              </span>
-
-              <span class="nav__menu-arrow">↗</span>
-            </a>
-
-            <a
-              href="/hasil/mpk"
-              class="nav__menu-link"
-              @click="closeMenu"
-            >
-              <span class="nav__menu-number">04</span>
-
-              <span class="nav__menu-text">
-                Hasil MPK
-              </span>
-
-              <span class="nav__menu-arrow">↗</span>
-            </a>
-
-            <a
-              href="/vote/access"
-              class="nav__menu-link nav__menu-link--active"
-              @click="closeMenu"
-            >
-              <span class="nav__menu-number">05</span>
-
-              <span class="nav__menu-text">
-                Mulai memilih
-              </span>
-
-              <span class="nav__menu-arrow">↗</span>
-            </a>
-          </nav>
-
-          <div class="nav__menu-footer">
-            <span>
-              Pemilos 2026/2027
-            </span>
-
-            <span>
-              OSIS &amp; MPK
-            </span>
-          </div>
-        </div>
-      </Transition>
-
-      <!-- OVERLAY -->
-      <Transition name="overlay-fade">
-        <button
-          v-if="menuOpen"
-          type="button"
-          class="nav__overlay"
-          aria-label="Tutup menu"
-          @click="closeMenu"
-        ></button>
-      </Transition>
-    </header>
-
-    <!-- =====================================================
-         MAIN
-    ====================================================== -->
-    <main class="access">
-      <div class="access__inner">
-        <!-- STEP -->
-        <div class="access__meta">
-          <span class="access__step">
-            <span class="access__step-number">01</span>
-            Verifikasi pemilih
-          </span>
-
-          <span class="access__year">
-            Pemilos 2026/2027
-          </span>
-        </div>
-
-        <!-- TITLE -->
-        <section class="access__heading">
-          <p class="access__eyebrow">
-            Pemilihan OSIS &amp; MPK
-          </p>
-
-          <h1 class="access__title">
-            Satu suara dimulai
-            <em>dari sini.</em>
-          </h1>
-
-          <p class="access__desc">
-            Masukkan kelas, NIS, dan tanggal lahir untuk memverifikasi
-            hak suara sebelum masuk ke bilik pemilihan.
-          </p>
-        </section>
-
-        <!-- SECURITY -->
-        <div class="security">
-          <div class="security__icon">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.6"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M12 3l7 3v5c0 4.6-2.9 8.1-7 10-4.1-1.9-7-5.4-7-10V6l7-3z" />
-              <path d="M8.5 12l2.2 2.2 4.8-5" />
-            </svg>
-          </div>
-
-          <div class="security__content">
-            <strong>Data kamu tetap rahasia.</strong>
-
-            <p>
-              Data hanya digunakan untuk memvalidasi hak suara dan
-              memastikan setiap siswa dapat memilih secara sah.
-            </p>
-          </div>
-        </div>
-
-        <!-- FORM -->
-        <form
-          @submit.prevent="submit"
-          class="form-card"
-        >
-          <!-- KELAS -->
-          <div class="field">
-            <label for="class_name">
-              Kelas
-            </label>
-
-            <div class="input-wrapper">
-              <svg
-                class="input-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M3 10l9-5 9 5" />
-                <path d="M5 10v9M9 10v9M15 10v9M19 10v9" />
-                <path d="M3 19h18M2 10h20" />
-              </svg>
-
-              <select
-                id="class_name"
-                v-model="form.class_name"
-                :class="{ 'has-error': form.errors.class_name }"
-              >
-                <option value="" disabled>
-                  Pilih kelas
-                </option>
-
-                <optgroup label="Kelas X">
-                  <option
-                    v-for="item in kelas.filter(item => item.startsWith('X-'))"
-                    :key="item"
-                    :value="item"
-                  >
-                    {{ item }}
-                  </option>
-                </optgroup>
-
-                <optgroup label="Kelas XI">
-                  <option
-                    v-for="item in kelas.filter(item => item.startsWith('XI-'))"
-                    :key="item"
-                    :value="item"
-                  >
-                    {{ item }}
-                  </option>
-                </optgroup>
-
-                <optgroup label="Kelas XII">
-                  <option
-                    v-for="item in kelas.filter(item => item.startsWith('XII-'))"
-                    :key="item"
-                    :value="item"
-                  >
-                    {{ item }}
-                  </option>
-                </optgroup>
-              </select>
-
-              <svg
-                class="select-arrow"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
+                <button
+                    type="button"
+                    class="nav__menu-button"
+                    :class="{ 'is-open': menuOpen }"
+                    :aria-expanded="menuOpen"
+                    aria-label="Buka menu navigasi"
+                    @click="toggleMenu"
+                >
+                    <span class="nav__menu-label">Menu</span>
+                    <span class="nav__hamburger"
+                        ><span></span><span></span
+                    ></span>
+                </button>
             </div>
 
-            <p
-              v-if="form.errors.class_name"
-              class="error"
-            >
-              {{ form.errors.class_name }}
-            </p>
-          </div>
+            <Transition name="menu-fade">
+                <div v-if="menuOpen" class="nav__menu">
+                    <div class="nav__menu-header">
+                        <span>Navigasi</span>
+                        <button
+                            type="button"
+                            class="nav__menu-close"
+                            aria-label="Tutup menu"
+                            @click="closeMenu"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                            >
+                                <path d="M6 6l12 12M18 6L6 18" />
+                            </svg>
+                        </button>
+                    </div>
 
-          <!-- NIS -->
-          <div class="field">
-            <label for="nis">
-              Nomor Induk Siswa (NIS)
-            </label>
+                    <nav class="nav__menu-links">
+                        <a href="/" class="nav__menu-link" @click="closeMenu">
+                            <span class="nav__menu-number">01</span>
+                            <span class="nav__menu-text">Beranda</span>
+                            <span class="nav__menu-arrow">↗</span>
+                        </a>
 
-            <div class="input-wrapper">
-              <svg
-                class="input-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="4" y="3" width="16" height="18" rx="2" />
-                <circle cx="12" cy="9" r="2.5" />
-                <path d="M8 16c1-1.3 2.3-2 4-2s3 .7 4 2" />
-              </svg>
+                        <a
+                            href="/pengumuman"
+                            class="nav__menu-link"
+                            @click="closeMenu"
+                        >
+                            <span class="nav__menu-number">02</span>
+                            <span class="nav__menu-text">Pengumuman</span>
+                            <span class="nav__menu-arrow">↗</span>
+                        </a>
 
-              <input
-                id="nis"
-                v-model="form.nis"
-                type="text"
-                inputmode="numeric"
-                autocomplete="off"
-                placeholder="Masukkan NIS"
-                :class="{ 'has-error': form.errors.nis }"
-              />
+                        <a
+                            href="/hasil/osis"
+                            class="nav__menu-link"
+                            @click="closeMenu"
+                        >
+                            <span class="nav__menu-number">03</span>
+                            <span class="nav__menu-text">Hasil OSIS</span>
+                            <span class="nav__menu-arrow">↗</span>
+                        </a>
+
+                        <a
+                            href="/hasil/mpk"
+                            class="nav__menu-link"
+                            @click="closeMenu"
+                        >
+                            <span class="nav__menu-number">04</span>
+                            <span class="nav__menu-text">Hasil MPK</span>
+                            <span class="nav__menu-arrow">↗</span>
+                        </a>
+
+                        <a
+                            href="/vote/access"
+                            class="nav__menu-link nav__menu-link--active"
+                            @click="closeMenu"
+                        >
+                            <span class="nav__menu-number">05</span>
+                            <span class="nav__menu-text">Mulai memilih</span>
+                            <span class="nav__menu-arrow">↗</span>
+                        </a>
+                    </nav>
+
+                    <div class="nav__menu-footer">
+                        <span>Pemilos 2026/2027</span>
+                        <span>OSIS &amp; MPK</span>
+                    </div>
+                </div>
+            </Transition>
+
+            <Transition name="overlay-fade">
+                <button
+                    v-if="menuOpen"
+                    type="button"
+                    class="nav__overlay"
+                    aria-label="Tutup menu"
+                    @click="closeMenu"
+                ></button>
+            </Transition>
+        </header>
+
+        <!-- MAIN -->
+        <main class="access">
+            <div class="access__inner">
+                <div class="access__meta">
+                    <span class="access__step">
+                        <span class="access__step-number">01</span>
+                        Verifikasi pemilih
+                    </span>
+                    <span class="access__year">Pemilos 2026/2027</span>
+                </div>
+
+                <section class="access__heading">
+                    <p class="access__eyebrow">Pemilihan OSIS &amp; MPK</p>
+                    <h1 class="access__title">
+                        Satu suara dimulai<br /><em>dari sini.</em>
+                    </h1>
+                    <p class="access__desc">
+                        Untuk siswa, guru &amp; tenaga kependidikan (GTK),
+                        maupun mahasiswa UM Mengajar yang terdaftar sebagai
+                        pemilih — pilih kelas atau status kamu, lalu masukkan
+                        nomor identitas dan tanggal lahir untuk memverifikasi
+                        hak suara.
+                    </p>
+                </section>
+
+                <div class="security">
+                    <div class="security__icon">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.6"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path
+                                d="M12 3l7 3v5c0 4.6-2.9 8.1-7 10-4.1-1.9-7-5.4-7-10V6l7-3z"
+                            />
+                            <path d="M8.5 12l2.2 2.2 4.8-5" />
+                        </svg>
+                    </div>
+                    <div class="security__content">
+                        <strong>Data kamu tetap rahasia.</strong>
+                        <p>
+                            Data hanya digunakan untuk memvalidasi hak suara dan
+                            memastikan setiap pemilih dapat memilih secara sah.
+                        </p>
+                    </div>
+                </div>
+
+                <form @submit.prevent="submit" class="form-card">
+                    <!-- KELAS / STATUS -->
+                    <div class="field">
+                        <label for="class_name">Kelas / Status</label>
+
+                        <div class="input-wrapper">
+                            <svg
+                                class="input-icon"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M3 10l9-5 9 5" />
+                                <path d="M5 10v9M9 10v9M15 10v9M19 10v9" />
+                                <path d="M3 19h18M2 10h20" />
+                            </svg>
+
+                            <select
+                                id="class_name"
+                                v-model="form.class_name"
+                                :class="{ 'has-error': form.errors.class_name }"
+                            >
+                                <option value="" disabled>
+                                    Pilih kelas atau status
+                                </option>
+
+                                <optgroup label="Kelas X">
+                                    <option
+                                        v-for="item in kelasSiswa.filter(
+                                            (item) => item.startsWith('X-'),
+                                        )"
+                                        :key="item"
+                                        :value="item"
+                                    >
+                                        {{ item }}
+                                    </option>
+                                </optgroup>
+
+                                <optgroup label="Kelas XI">
+                                    <option
+                                        v-for="item in kelasSiswa.filter(
+                                            (item) => item.startsWith('XI-'),
+                                        )"
+                                        :key="item"
+                                        :value="item"
+                                    >
+                                        {{ item }}
+                                    </option>
+                                </optgroup>
+
+                                <optgroup label="Kelas XII">
+                                    <option
+                                        v-for="item in kelasSiswa.filter(
+                                            (item) => item.startsWith('XII-'),
+                                        )"
+                                        :key="item"
+                                        :value="item"
+                                    >
+                                        {{ item }}
+                                    </option>
+                                </optgroup>
+
+                                <optgroup label="Guru & Tenaga Kependidikan">
+                                    <option value="GTK ASN">GTK ASN</option>
+                                    <option value="GTK NON ASN">
+                                        GTK Non ASN
+                                    </option>
+                                </optgroup>
+
+                                <optgroup label="Mahasiswa">
+                                    <option value="MAHASISWA">
+                                        Mahasiswa UM Mengajar
+                                    </option>
+                                </optgroup>
+                            </select>
+
+                            <svg
+                                class="select-arrow"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="m6 9 6 6 6-6" />
+                            </svg>
+                        </div>
+
+                        <p v-if="form.errors.class_name" class="error">
+                            {{ form.errors.class_name }}
+                        </p>
+                    </div>
+
+                    <!-- NOMOR IDENTITAS -->
+                    <div class="field">
+                        <label for="nis">{{ idConfig.label }}</label>
+
+                        <div class="input-wrapper">
+                            <svg
+                                class="input-icon"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <rect
+                                    x="4"
+                                    y="3"
+                                    width="16"
+                                    height="18"
+                                    rx="2"
+                                />
+                                <circle cx="12" cy="9" r="2.5" />
+                                <path d="M8 16c1-1.3 2.3-2 4-2s3 .7 4 2" />
+                            </svg>
+
+                            <input
+                                id="nis"
+                                v-model="form.nis"
+                                type="text"
+                                :inputmode="isNonSiswa ? 'text' : 'numeric'"
+                                autocomplete="off"
+                                :placeholder="idConfig.placeholder"
+                                :class="{ 'has-error': form.errors.nis }"
+                            />
+                        </div>
+
+                        <p class="field-helper">{{ idConfig.helper }}</p>
+                        <p v-if="form.errors.nis" class="error">
+                            {{ form.errors.nis }}
+                        </p>
+                    </div>
+
+                    <!-- TANGGAL LAHIR -->
+                    <div class="field">
+                        <label for="tanggal_lahir">Tanggal Lahir</label>
+
+                        <div class="input-wrapper">
+                            <svg
+                                class="input-icon"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <rect
+                                    x="3"
+                                    y="5"
+                                    width="18"
+                                    height="16"
+                                    rx="2"
+                                />
+                                <path d="M16 3v4M8 3v4M3 10h18" />
+                                <path
+                                    d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"
+                                />
+                            </svg>
+
+                            <input
+                                id="tanggal_lahir"
+                                v-model="form.tanggal_lahir"
+                                type="date"
+                                :class="{
+                                    'has-error': form.errors.tanggal_lahir,
+                                }"
+                            />
+                        </div>
+
+                        <p v-if="form.errors.tanggal_lahir" class="error">
+                            {{ form.errors.tanggal_lahir }}
+                        </p>
+                    </div>
+
+                    <button
+                        type="submit"
+                        :disabled="form.processing"
+                        class="form-card__submit"
+                    >
+                        <span>{{
+                            form.processing ? 'Memvalidasi...' : 'Mulai memilih'
+                        }}</span>
+                        <span class="form-card__arrow">↗</span>
+                    </button>
+
+                    <p class="form-card__note">
+                        Pastikan data yang kamu masukkan sudah benar sebelum
+                        melanjutkan.
+                    </p>
+                </form>
+
+                <a href="/" class="back-link">
+                    <span>←</span>
+                    Kembali ke halaman awal
+                </a>
             </div>
+        </main>
 
-            <p
-              v-if="form.errors.nis"
-              class="error"
-            >
-              {{ form.errors.nis }}
-            </p>
-          </div>
-
-          <!-- TANGGAL LAHIR -->
-          <div class="field">
-            <label for="tanggal_lahir">
-              Tanggal Lahir
-            </label>
-
-            <div class="input-wrapper">
-              <svg
-                class="input-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="3" y="5" width="18" height="16" rx="2" />
-                <path d="M16 3v4M8 3v4M3 10h18" />
-                <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
-              </svg>
-
-              <input
-                id="tanggal_lahir"
-                v-model="form.tanggal_lahir"
-                type="date"
-                :class="{ 'has-error': form.errors.tanggal_lahir }"
-              />
-            </div>
-
-            <p
-              v-if="form.errors.tanggal_lahir"
-              class="error"
-            >
-              {{ form.errors.tanggal_lahir }}
-            </p>
-          </div>
-
-          <!-- SUBMIT -->
-          <button
-            type="submit"
-            :disabled="form.processing"
-            class="form-card__submit"
-          >
-            <span>
-              {{ form.processing ? 'Memvalidasi...' : 'Mulai memilih' }}
-            </span>
-
-            <span class="form-card__arrow">
-              ↗
-            </span>
-          </button>
-
-          <p class="form-card__note">
-            Pastikan data yang kamu masukkan sudah benar sebelum melanjutkan.
-          </p>
-        </form>
-
-        <!-- BACK -->
-        <a
-          href="/"
-          class="back-link"
-        >
-          <span>←</span>
-          Kembali ke halaman awal
-        </a>
-      </div>
-    </main>
-
-    <!-- =====================================================
-         FOOTER
-    ====================================================== -->
-    <footer class="footer">
-      <span>
-        Panitia Pemilihan OSIS &amp; MPK
-      </span>
-
-      <span>
-        {{ new Date().getFullYear() }}
-      </span>
-    </footer>
-  </div>
+        <!-- FOOTER -->
+        <footer class="footer">
+            <span>Panitia Pemilihan OSIS &amp; MPK</span>
+            <span>{{ new Date().getFullYear() }}</span>
+        </footer>
+    </div>
 </template>
 
 <style scoped>
@@ -488,37 +471,33 @@ onUnmounted(() => {
 ========================================================= */
 
 .page {
-  --ink: #181716;
-  --ink-muted: #77736d;
-  --ink-faint: #a09b93;
-  --accent: #4b1f63;
-  --paper: #f6f3ee;
-  --paper-dark: #ebe7df;
-  --white: #fffdf9;
-  --line: #d9d4cb;
+    --ink: #181716;
+    --ink-muted: #77736d;
+    --ink-faint: #a09b93;
+    --accent: #4b1f63;
+    --paper: #f6f3ee;
+    --paper-dark: #ebe7df;
+    --white: #fffdf9;
+    --line: #d9d4cb;
 
-  min-height: 100vh;
+    min-height: 100vh;
 
-  background: var(--paper);
-  color: var(--ink);
+    background: var(--paper);
+    color: var(--ink);
 
-  font-family:
-    'Inter',
-    'Plus Jakarta Sans',
-    system-ui,
-    sans-serif;
+    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
 
-  -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased;
 }
 
 .page *,
 .page *::before,
 .page *::after {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .page a {
-  -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* =========================================================
@@ -526,71 +505,68 @@ onUnmounted(() => {
 ========================================================= */
 
 .nav {
-  position: relative;
+    position: relative;
 
-  width: min(1180px, calc(100% - 48px));
-  min-height: 76px;
+    width: min(1180px, calc(100% - 48px));
+    min-height: 76px;
 
-  margin: 0 auto;
+    margin: 0 auto;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  z-index: 100;
+    z-index: 100;
 }
 
 .nav__logo {
-  position: relative;
-  z-index: 102;
+    position: relative;
+    z-index: 102;
 
-  color: var(--ink);
+    color: var(--ink);
 
-  font-family:
-    'Fraunces',
-    Georgia,
-    serif;
+    font-family: 'Fraunces', Georgia, serif;
 
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.025em;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
 
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .nav__right {
-  position: relative;
-  z-index: 102;
+    position: relative;
+    z-index: 102;
 
-  display: flex;
-  align-items: center;
-  gap: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .nav__back {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 
-  color: var(--ink-muted);
+    color: var(--ink-muted);
 
-  font-size: 12px;
-  font-weight: 600;
+    font-size: 12px;
+    font-weight: 600;
 
-  text-decoration: none;
+    text-decoration: none;
 
-  transition:
-    color 180ms ease,
-    transform 180ms ease;
+    transition:
+        color 180ms ease,
+        transform 180ms ease;
 }
 
 .nav__back:hover {
-  color: var(--ink);
-  transform: translateX(-2px);
+    color: var(--ink);
+    transform: translateX(-2px);
 }
 
 .nav__back-arrow {
-  font-size: 16px;
+    font-size: 16px;
 }
 
 /* =========================================================
@@ -598,77 +574,73 @@ onUnmounted(() => {
 ========================================================= */
 
 .nav__menu-button {
-  min-height: 38px;
+    min-height: 38px;
 
-  display: inline-flex;
-  align-items: center;
-  gap: 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
 
-  padding: 0 13px;
+    padding: 0 13px;
 
-  border: 1px solid var(--line);
-  border-radius: 999px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
 
-  background: transparent;
-  color: var(--ink);
+    background: transparent;
+    color: var(--ink);
 
-  cursor: pointer;
+    cursor: pointer;
 
-  font-family:
-    'Inter',
-    'Plus Jakarta Sans',
-    system-ui,
-    sans-serif;
+    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
 
-  transition:
-    background 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease;
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease;
 }
 
 .nav__menu-button:hover,
 .nav__menu-button.is-open {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--paper);
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
 }
 
 .nav__menu-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .nav__hamburger {
-  width: 17px;
-  height: 14px;
+    width: 17px;
+    height: 14px;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
 }
 
 .nav__hamburger span {
-  display: block;
+    display: block;
 
-  width: 17px;
-  height: 1px;
+    width: 17px;
+    height: 1px;
 
-  background: currentColor;
+    background: currentColor;
 
-  transition:
-    transform 180ms ease,
-    width 180ms ease;
+    transition:
+        transform 180ms ease,
+        width 180ms ease;
 }
 
 .nav__menu-button.is-open .nav__hamburger span:first-child {
-  transform: translateY(3px) rotate(45deg);
+    transform: translateY(3px) rotate(45deg);
 }
 
 .nav__menu-button.is-open .nav__hamburger span:last-child {
-  transform: translateY(-3px) rotate(-45deg);
+    transform: translateY(-3px) rotate(-45deg);
 }
 
 /* =========================================================
@@ -676,23 +648,23 @@ onUnmounted(() => {
 ========================================================= */
 
 .nav__overlay {
-  position: fixed;
-  inset: 0;
+    position: fixed;
+    inset: 0;
 
-  z-index: 99;
+    z-index: 99;
 
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 
-  padding: 0;
-  border: 0;
+    padding: 0;
+    border: 0;
 
-  background: rgba(24, 23, 22, 0.18);
+    background: rgba(24, 23, 22, 0.18);
 
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
 
-  cursor: default;
+    cursor: default;
 }
 
 /* =========================================================
@@ -700,77 +672,77 @@ onUnmounted(() => {
 ========================================================= */
 
 .nav__menu {
-  position: absolute;
+    position: absolute;
 
-  top: 58px;
-  right: 0;
+    top: 58px;
+    right: 0;
 
-  z-index: 101;
+    z-index: 101;
 
-  width: min(390px, calc(100vw - 32px));
+    width: min(390px, calc(100vw - 32px));
 
-  background: var(--white);
+    background: var(--white);
 
-  border: 1px solid var(--line);
-  border-top: 1px solid var(--ink);
+    border: 1px solid var(--line);
+    border-top: 1px solid var(--ink);
 
-  box-shadow:
-    0 22px 60px rgba(24, 23, 22, 0.13),
-    0 5px 15px rgba(24, 23, 22, 0.05);
+    box-shadow:
+        0 22px 60px rgba(24, 23, 22, 0.13),
+        0 5px 15px rgba(24, 23, 22, 0.05);
 }
 
 .nav__menu-header {
-  min-height: 55px;
+    min-height: 55px;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  padding: 0 18px;
+    padding: 0 18px;
 
-  border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
 
-  color: var(--ink-muted);
+    color: var(--ink-muted);
 
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
 }
 
 .nav__menu-close {
-  width: 30px;
-  height: 30px;
+    width: 30px;
+    height: 30px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  padding: 0;
+    padding: 0;
 
-  border: 1px solid var(--line);
-  border-radius: 50%;
+    border: 1px solid var(--line);
+    border-radius: 50%;
 
-  background: transparent;
-  color: var(--ink-muted);
+    background: transparent;
+    color: var(--ink-muted);
 
-  cursor: pointer;
+    cursor: pointer;
 
-  transition:
-    background 180ms ease,
-    color 180ms ease,
-    border-color 180ms ease;
+    transition:
+        background 180ms ease,
+        color 180ms ease,
+        border-color 180ms ease;
 }
 
 .nav__menu-close:hover {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--paper);
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
 }
 
 .nav__menu-close svg {
-  width: 14px;
-  height: 14px;
+    width: 14px;
+    height: 14px;
 }
 
 /* =========================================================
@@ -778,96 +750,90 @@ onUnmounted(() => {
 ========================================================= */
 
 .nav__menu-links {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .nav__menu-link {
-  min-height: 69px;
+    min-height: 69px;
 
-  display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) 22px;
-  align-items: center;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 22px;
+    align-items: center;
 
-  gap: 10px;
+    gap: 10px;
 
-  padding: 0 19px;
+    padding: 0 19px;
 
-  border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
 
-  color: var(--ink);
+    color: var(--ink);
 
-  text-decoration: none;
+    text-decoration: none;
 
-  transition:
-    background 180ms ease,
-    padding 180ms ease;
+    transition:
+        background 180ms ease,
+        padding 180ms ease;
 }
 
 .nav__menu-link:hover {
-  padding-left: 24px;
-  background: var(--paper);
+    padding-left: 24px;
+    background: var(--paper);
 }
 
 .nav__menu-number {
-  color: var(--ink-faint);
+    color: var(--ink-faint);
 
-  font-family:
-    'Fraunces',
-    Georgia,
-    serif;
+    font-family: 'Fraunces', Georgia, serif;
 
-  font-size: 13px;
+    font-size: 13px;
 }
 
 .nav__menu-text {
-  font-family:
-    'Fraunces',
-    Georgia,
-    serif;
+    font-family: 'Fraunces', Georgia, serif;
 
-  font-size: 20px;
-  font-weight: 500;
+    font-size: 20px;
+    font-weight: 500;
 
-  letter-spacing: -0.025em;
+    letter-spacing: -0.025em;
 }
 
 .nav__menu-arrow {
-  color: var(--ink-muted);
-  font-size: 16px;
+    color: var(--ink-muted);
+    font-size: 16px;
 
-  transition: transform 180ms ease;
+    transition: transform 180ms ease;
 }
 
 .nav__menu-link:hover .nav__menu-arrow {
-  transform: translate(2px, -2px);
+    transform: translate(2px, -2px);
 }
 
 .nav__menu-link--active {
-  background: rgba(75, 31, 99, 0.045);
+    background: rgba(75, 31, 99, 0.045);
 }
 
 .nav__menu-link--active .nav__menu-text {
-  color: var(--accent);
+    color: var(--accent);
 }
 
 .nav__menu-footer {
-  min-height: 50px;
+    min-height: 50px;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  gap: 20px;
+    gap: 20px;
 
-  padding: 0 19px;
+    padding: 0 19px;
 
-  color: var(--ink-faint);
+    color: var(--ink-faint);
 
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
 }
 
 /* =========================================================
@@ -876,25 +842,25 @@ onUnmounted(() => {
 
 .menu-fade-enter-active,
 .menu-fade-leave-active {
-  transition:
-    opacity 180ms ease,
-    transform 180ms cubic-bezier(.22, 1, .36, 1);
+    transition:
+        opacity 180ms ease,
+        transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .menu-fade-enter-from,
 .menu-fade-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
+    opacity: 0;
+    transform: translateY(-8px);
 }
 
 .overlay-fade-enter-active,
 .overlay-fade-leave-active {
-  transition: opacity 180ms ease;
+    transition: opacity 180ms ease;
 }
 
 .overlay-fade-enter-from,
 .overlay-fade-leave-to {
-  opacity: 0;
+    opacity: 0;
 }
 
 /* =========================================================
@@ -902,17 +868,17 @@ onUnmounted(() => {
 ========================================================= */
 
 .access {
-  width: min(1180px, calc(100% - 48px));
+    width: min(1180px, calc(100% - 48px));
 
-  margin: 0 auto;
+    margin: 0 auto;
 
-  padding: 72px 0 90px;
+    padding: 72px 0 90px;
 }
 
 .access__inner {
-  width: min(100%, 620px);
+    width: min(100%, 620px);
 
-  margin: 0 auto;
+    margin: 0 auto;
 }
 
 /* =========================================================
@@ -920,54 +886,51 @@ onUnmounted(() => {
 ========================================================= */
 
 .access__meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  gap: 20px;
+    gap: 20px;
 
-  margin-bottom: 38px;
-  padding-bottom: 16px;
+    margin-bottom: 38px;
+    padding-bottom: 16px;
 
-  border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
 }
 
 .access__step {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
 
-  color: var(--ink-muted);
+    color: var(--ink-muted);
 
-  font-size: 10px;
-  font-weight: 700;
+    font-size: 10px;
+    font-weight: 700;
 
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 .access__step-number {
-  color: var(--ink-faint);
+    color: var(--ink-faint);
 
-  font-family:
-    'Fraunces',
-    Georgia,
-    serif;
+    font-family: 'Fraunces', Georgia, serif;
 
-  font-size: 17px;
-  font-weight: 500;
+    font-size: 17px;
+    font-weight: 500;
 
-  letter-spacing: 0;
+    letter-spacing: 0;
 }
 
 .access__year {
-  color: var(--ink-faint);
+    color: var(--ink-faint);
 
-  font-size: 9px;
-  font-weight: 700;
+    font-size: 9px;
+    font-weight: 700;
 
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 /* =========================================================
@@ -975,49 +938,46 @@ onUnmounted(() => {
 ========================================================= */
 
 .access__heading {
-  margin-bottom: 35px;
+    margin-bottom: 35px;
 }
 
 .access__eyebrow {
-  margin: 0 0 20px;
+    margin: 0 0 20px;
 
-  color: var(--ink-muted);
+    color: var(--ink-muted);
 
-  font-size: 10px;
-  font-weight: 700;
+    font-size: 10px;
+    font-weight: 700;
 
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
 }
 
 .access__title {
-  margin: 0;
+    margin: 0;
 
-  font-family:
-    'Fraunces',
-    Georgia,
-    serif;
+    font-family: 'Fraunces', Georgia, serif;
 
-  font-size: clamp(45px, 7vw, 66px);
-  font-weight: 600;
+    font-size: clamp(45px, 7vw, 66px);
+    font-weight: 600;
 
-  line-height: 0.98;
-  letter-spacing: -0.045em;
+    line-height: 0.98;
+    letter-spacing: -0.045em;
 }
 
 .access__title em {
-  font-weight: 400;
+    font-weight: 400;
 }
 
 .access__desc {
-  max-width: 510px;
+    max-width: 510px;
 
-  margin: 25px 0 0;
+    margin: 25px 0 0;
 
-  color: var(--ink-muted);
+    color: var(--ink-muted);
 
-  font-size: 14px;
-  line-height: 1.75;
+    font-size: 14px;
+    line-height: 1.75;
 }
 
 /* =========================================================
@@ -1025,61 +985,61 @@ onUnmounted(() => {
 ========================================================= */
 
 .security {
-  display: flex;
-  align-items: flex-start;
+    display: flex;
+    align-items: flex-start;
 
-  gap: 15px;
+    gap: 15px;
 
-  margin-bottom: 24px;
-  padding: 17px 18px;
+    margin-bottom: 24px;
+    padding: 17px 18px;
 
-  border: 1px solid rgba(75, 31, 99, 0.16);
+    border: 1px solid rgba(75, 31, 99, 0.16);
 
-  background: rgba(75, 31, 99, 0.045);
+    background: rgba(75, 31, 99, 0.045);
 }
 
 .security__icon {
-  width: 40px;
-  height: 40px;
+    width: 40px;
+    height: 40px;
 
-  flex: 0 0 auto;
+    flex: 0 0 auto;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  background: rgba(75, 31, 99, 0.09);
+    background: rgba(75, 31, 99, 0.09);
 
-  color: var(--accent);
+    color: var(--accent);
 }
 
 .security__icon svg {
-  width: 21px;
-  height: 21px;
+    width: 21px;
+    height: 21px;
 }
 
 .security__content {
-  padding-top: 1px;
+    padding-top: 1px;
 }
 
 .security__content strong {
-  display: block;
+    display: block;
 
-  color: var(--ink);
+    color: var(--ink);
 
-  font-size: 12px;
-  font-weight: 700;
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .security__content p {
-  max-width: 470px;
+    max-width: 470px;
 
-  margin: 5px 0 0;
+    margin: 5px 0 0;
 
-  color: var(--ink-muted);
+    color: var(--ink-muted);
 
-  font-size: 11px;
-  line-height: 1.65;
+    font-size: 11px;
+    line-height: 1.65;
 }
 
 /* =========================================================
@@ -1087,15 +1047,14 @@ onUnmounted(() => {
 ========================================================= */
 
 .form-card {
-  padding: 34px;
+    padding: 34px;
 
-  background: var(--white);
+    background: var(--white);
 
-  border-top: 1px solid var(--ink);
-  border-bottom: 1px solid var(--line);
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--line);
 
-  box-shadow:
-    0 14px 35px rgba(24, 23, 22, 0.035);
+    box-shadow: 0 14px 35px rgba(24, 23, 22, 0.035);
 }
 
 /* =========================================================
@@ -1103,123 +1062,126 @@ onUnmounted(() => {
 ========================================================= */
 
 .field {
-  margin-bottom: 22px;
+    margin-bottom: 22px;
 }
 
 .field label {
-  display: block;
+    display: block;
 
-  margin-bottom: 9px;
+    margin-bottom: 9px;
 
-  color: var(--ink-muted);
+    color: var(--ink-muted);
 
-  font-size: 10px;
-  font-weight: 700;
+    font-size: 10px;
+    font-weight: 700;
 
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.field-helper {
+    margin: 7px 0 0;
+
+    color: var(--ink-faint);
+
+    font-size: 10px;
+    line-height: 1.6;
 }
 
 .input-wrapper {
-  position: relative;
+    position: relative;
 }
 
 .input-icon {
-  position: absolute;
+    position: absolute;
 
-  left: 16px;
-  top: 50%;
+    left: 16px;
+    top: 50%;
 
-  width: 19px;
-  height: 19px;
+    width: 19px;
+    height: 19px;
 
-  color: var(--ink-faint);
+    color: var(--ink-faint);
 
-  transform: translateY(-50%);
+    transform: translateY(-50%);
 
-  pointer-events: none;
+    pointer-events: none;
 }
 
 .input-wrapper input,
 .input-wrapper select {
-  width: 100%;
-  min-height: 52px;
+    width: 100%;
+    min-height: 52px;
 
-  padding: 0 46px 0 48px;
+    padding: 0 46px 0 48px;
 
-  border: 1px solid var(--line);
-  border-radius: 0;
+    border: 1px solid var(--line);
+    border-radius: 0;
 
-  background: var(--paper);
-  color: var(--ink);
+    background: var(--paper);
+    color: var(--ink);
 
-  outline: none;
+    outline: none;
 
-  font-family:
-    'Inter',
-    'Plus Jakarta Sans',
-    system-ui,
-    sans-serif;
+    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
 
-  font-size: 13px;
-  font-weight: 500;
+    font-size: 13px;
+    font-weight: 500;
 
-  transition:
-    border-color 180ms ease,
-    background 180ms ease,
-    box-shadow 180ms ease;
+    transition:
+        border-color 180ms ease,
+        background 180ms ease,
+        box-shadow 180ms ease;
 }
 
 .input-wrapper input::placeholder {
-  color: var(--ink-faint);
+    color: var(--ink-faint);
 }
 
 .input-wrapper input:focus,
 .input-wrapper select:focus {
-  border-color: var(--ink);
+    border-color: var(--ink);
 
-  background: var(--white);
+    background: var(--white);
 
-  box-shadow:
-    0 0 0 3px rgba(24, 23, 22, 0.055);
+    box-shadow: 0 0 0 3px rgba(24, 23, 22, 0.055);
 }
 
 .input-wrapper input.has-error,
 .input-wrapper select.has-error {
-  border-color: #a74a3d;
+    border-color: #a74a3d;
 }
 
 .input-wrapper select {
-  appearance: none;
-  -webkit-appearance: none;
+    appearance: none;
+    -webkit-appearance: none;
 
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .select-arrow {
-  position: absolute;
+    position: absolute;
 
-  right: 17px;
-  top: 50%;
+    right: 17px;
+    top: 50%;
 
-  width: 15px;
-  height: 15px;
+    width: 15px;
+    height: 15px;
 
-  color: var(--ink-faint);
+    color: var(--ink-faint);
 
-  transform: translateY(-50%);
+    transform: translateY(-50%);
 
-  pointer-events: none;
+    pointer-events: none;
 }
-
 
 /* =========================================================
    DATE INPUT
 ========================================================= */
 
 .input-wrapper input[type='date']::-webkit-calendar-picker-indicator {
-  opacity: 0.45;
-  cursor: pointer;
+    opacity: 0.45;
+    cursor: pointer;
 }
 
 /* =========================================================
@@ -1227,12 +1189,12 @@ onUnmounted(() => {
 ========================================================= */
 
 .error {
-  margin: 7px 0 0;
+    margin: 7px 0 0;
 
-  color: #a74a3d;
+    color: #a74a3d;
 
-  font-size: 10px;
-  font-weight: 600;
+    font-size: 10px;
+    font-weight: 600;
 }
 
 /* =========================================================
@@ -1240,63 +1202,59 @@ onUnmounted(() => {
 ========================================================= */
 
 .form-card__submit {
-  width: 100%;
-  min-height: 52px;
+    width: 100%;
+    min-height: 52px;
 
-  margin-top: 5px;
+    margin-top: 5px;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  padding: 0 19px 0 21px;
+    padding: 0 19px 0 21px;
 
-  border: 0;
-  border-radius: 0;
+    border: 0;
+    border-radius: 0;
 
-  background: var(--ink);
-  color: var(--paper);
+    background: var(--ink);
+    color: var(--paper);
 
-  cursor: pointer;
+    cursor: pointer;
 
-  font-family:
-    'Inter',
-    'Plus Jakarta Sans',
-    system-ui,
-    sans-serif;
+    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
 
-  font-size: 13px;
-  font-weight: 600;
+    font-size: 13px;
+    font-weight: 600;
 
-  transition:
-    transform 180ms ease,
-    background 180ms ease;
+    transition:
+        transform 180ms ease,
+        background 180ms ease;
 }
 
 .form-card__submit:hover {
-  background: #302e2b;
-  transform: translateY(-2px);
+    background: #302e2b;
+    transform: translateY(-2px);
 }
 
 .form-card__submit:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-  transform: none;
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
 }
 
 .form-card__arrow {
-  font-size: 18px;
+    font-size: 18px;
 }
 
 .form-card__note {
-  margin: 13px 0 0;
+    margin: 13px 0 0;
 
-  color: var(--ink-faint);
+    color: var(--ink-faint);
 
-  font-size: 9px;
-  line-height: 1.6;
+    font-size: 9px;
+    line-height: 1.6;
 
-  text-align: center;
+    text-align: center;
 }
 
 /* =========================================================
@@ -1304,39 +1262,39 @@ onUnmounted(() => {
 ========================================================= */
 
 .back-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  gap: 7px;
+    gap: 7px;
 
-  width: fit-content;
+    width: fit-content;
 
-  margin: 27px auto 0;
+    margin: 27px auto 0;
 
-  color: var(--ink-muted);
+    color: var(--ink-muted);
 
-  font-size: 11px;
-  font-weight: 600;
+    font-size: 11px;
+    font-weight: 600;
 
-  text-decoration: none;
+    text-decoration: none;
 
-  border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
 
-  padding-bottom: 3px;
+    padding-bottom: 3px;
 
-  transition:
-    color 180ms ease,
-    border-color 180ms ease;
+    transition:
+        color 180ms ease,
+        border-color 180ms ease;
 }
 
 .back-link:hover {
-  color: var(--ink);
-  border-color: var(--ink);
+    color: var(--ink);
+    border-color: var(--ink);
 }
 
 .back-link span {
-  font-size: 15px;
+    font-size: 15px;
 }
 
 /* =========================================================
@@ -1344,25 +1302,25 @@ onUnmounted(() => {
 ========================================================= */
 
 .footer {
-  width: min(1180px, calc(100% - 48px));
+    width: min(1180px, calc(100% - 48px));
 
-  margin: 0 auto;
+    margin: 0 auto;
 
-  padding: 24px 0 40px;
+    padding: 24px 0 40px;
 
-  border-top: 1px solid var(--line);
+    border-top: 1px solid var(--line);
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  color: #8b867e;
+    color: #8b867e;
 
-  font-size: 10px;
-  font-weight: 600;
+    font-size: 10px;
+    font-weight: 600;
 
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
 
 /* =========================================================
@@ -1370,95 +1328,95 @@ onUnmounted(() => {
 ========================================================= */
 
 @media (max-width: 680px) {
-  .nav {
-    width: calc(100% - 32px);
-    min-height: 68px;
-  }
+    .nav {
+        width: calc(100% - 32px);
+        min-height: 68px;
+    }
 
-  .nav__back {
-    font-size: 11px;
-  }
+    .nav__back {
+        font-size: 11px;
+    }
 
-  .nav__back-arrow {
-    font-size: 15px;
-  }
+    .nav__back-arrow {
+        font-size: 15px;
+    }
 
-  .nav__right {
-    gap: 11px;
-  }
+    .nav__right {
+        gap: 11px;
+    }
 
-  .nav__menu-button {
-    min-height: 36px;
-    padding: 0 11px;
-    gap: 9px;
-  }
+    .nav__menu-button {
+        min-height: 36px;
+        padding: 0 11px;
+        gap: 9px;
+    }
 
-  .nav__menu-label {
-    font-size: 9px;
-  }
+    .nav__menu-label {
+        font-size: 9px;
+    }
 
-  .nav__menu {
-    position: fixed;
+    .nav__menu {
+        position: fixed;
 
-    top: 64px;
-    right: 16px;
+        top: 64px;
+        right: 16px;
 
-    width: calc(100vw - 32px);
+        width: calc(100vw - 32px);
 
-    max-height: calc(100vh - 82px);
+        max-height: calc(100vh - 82px);
 
-    overflow-y: auto;
-  }
+        overflow-y: auto;
+    }
 
-  .nav__menu-link {
-    min-height: 64px;
-  }
+    .nav__menu-link {
+        min-height: 64px;
+    }
 
-  .nav__menu-text {
-    font-size: 19px;
-  }
+    .nav__menu-text {
+        font-size: 19px;
+    }
 
-  .nav__menu-footer {
-    min-height: 45px;
-  }
+    .nav__menu-footer {
+        min-height: 45px;
+    }
 
-  .access {
-    width: calc(100% - 32px);
+    .access {
+        width: calc(100% - 32px);
 
-    padding: 50px 0 65px;
-  }
+        padding: 50px 0 65px;
+    }
 
-  .access__meta {
-    margin-bottom: 32px;
-  }
+    .access__meta {
+        margin-bottom: 32px;
+    }
 
-  .access__year {
-    display: none;
-  }
+    .access__year {
+        display: none;
+    }
 
-  .access__title {
-    font-size: clamp(43px, 13vw, 58px);
-  }
+    .access__title {
+        font-size: clamp(43px, 13vw, 58px);
+    }
 
-  .access__desc {
-    font-size: 13px;
-  }
+    .access__desc {
+        font-size: 13px;
+    }
 
-  .security {
-    padding: 15px;
-  }
+    .security {
+        padding: 15px;
+    }
 
-  .form-card {
-    padding: 25px 20px;
-  }
+    .form-card {
+        padding: 25px 20px;
+    }
 
-  .footer {
-    width: calc(100% - 32px);
+    .footer {
+        width: calc(100% - 32px);
 
-    padding-bottom: 30px;
+        padding-bottom: 30px;
 
-    gap: 14px;
-  }
+        gap: 14px;
+    }
 }
 
 /* =========================================================
@@ -1466,50 +1424,50 @@ onUnmounted(() => {
 ========================================================= */
 
 @media (max-width: 390px) {
-  .nav__back {
-    display: none;
-  }
+    .nav__back {
+        display: none;
+    }
 
-  .nav__menu-button {
-    min-height: 35px;
-  }
+    .nav__menu-button {
+        min-height: 35px;
+    }
 
-  .nav__menu {
-    top: 60px;
-    right: 16px;
+    .nav__menu {
+        top: 60px;
+        right: 16px;
 
-    width: calc(100vw - 32px);
-  }
+        width: calc(100vw - 32px);
+    }
 
-  .nav__menu-link {
-    grid-template-columns: 30px minmax(0, 1fr) 20px;
+    .nav__menu-link {
+        grid-template-columns: 30px minmax(0, 1fr) 20px;
 
-    padding: 0 16px;
-  }
+        padding: 0 16px;
+    }
 
-  .nav__menu-link:hover {
-    padding-left: 20px;
-  }
+    .nav__menu-link:hover {
+        padding-left: 20px;
+    }
 
-  .nav__menu-text {
-    font-size: 18px;
-  }
+    .nav__menu-text {
+        font-size: 18px;
+    }
 
-  .access {
-    padding-top: 42px;
-  }
+    .access {
+        padding-top: 42px;
+    }
 
-  .access__title {
-    font-size: 41px;
-  }
+    .access__title {
+        font-size: 41px;
+    }
 
-  .form-card {
-    padding: 23px 17px;
-  }
+    .form-card {
+        padding: 23px 17px;
+    }
 
-  .footer {
-    font-size: 9px;
-  }
+    .footer {
+        font-size: 9px;
+    }
 }
 
 /* =========================================================
@@ -1517,19 +1475,19 @@ onUnmounted(() => {
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .menu-fade-enter-active,
-  .menu-fade-leave-active,
-  .overlay-fade-enter-active,
-  .overlay-fade-leave-active {
-    transition: none !important;
-  }
+    .menu-fade-enter-active,
+    .menu-fade-leave-active,
+    .overlay-fade-enter-active,
+    .overlay-fade-leave-active {
+        transition: none !important;
+    }
 
-  .nav__menu-link,
-  .nav__menu-button,
-  .nav__menu-close,
-  .nav__hamburger span,
-  .nav__back {
-    transition: none !important;
-  }
+    .nav__menu-link,
+    .nav__menu-button,
+    .nav__menu-close,
+    .nav__hamburger span,
+    .nav__back {
+        transition: none !important;
+    }
 }
 </style>

@@ -10,12 +10,30 @@ use Inertia\Inertia;
 
 class VoterController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $voters = Voter::orderBy('class_name')->orderBy('name')->paginate(20);
+        $perPage = (int) $request->input('per_page', 20);
+        $perPage = in_array($perPage, [10, 20, 50, 100]) ? $perPage : 20;
+
+        $voters = Voter::query()
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->input('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('nis', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('class_name')
+            ->orderBy('name')
+            ->paginate($perPage)
+            ->withQueryString();
 
         return Inertia::render('Admin/Voters/Index', [
             'voters' => $voters,
+            'filters' => [
+                'search' => $request->input('search', ''),
+                'per_page' => $perPage,
+            ],
         ]);
     }
 

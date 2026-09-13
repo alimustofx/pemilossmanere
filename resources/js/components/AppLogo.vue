@@ -6,7 +6,9 @@ const name = usePage().props.name;
 </script>
 
 <template>
-    <div class="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-md">
+    <div
+        class="flex aspect-square size-8 items-center justify-center overflow-hidden rounded-md"
+    >
         <AppLogoIcon class="h-full w-full object-contain" />
     </div>
     <div class="ml-1 grid flex-1 text-left text-sm">
