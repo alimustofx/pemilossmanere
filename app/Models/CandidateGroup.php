@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CandidateGroup extends Model
 {
     use HasFactory;
+
     protected $fillable = ['election_id', 'nomor_urut', 'nama_kelompok', 'model', 'visi', 'misi'];
 
     public function election()

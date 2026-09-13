@@ -1,17 +1,17 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\VoterController;
-use App\Http\Controllers\Admin\CandidateGroupController;
-use App\Http\Controllers\Admin\ElectionController;
 use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\CandidateGroupController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ElectionController;
+use App\Http\Controllers\Admin\VoterController;
 use App\Http\Controllers\HasilController;
-use App\Http\Controllers\VoteAccessController;
-use App\Http\Controllers\VoteController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\PengumumanController;
+use App\Http\Controllers\VoteAccessController;
+use App\Http\Controllers\VoteController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,7 +61,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     */
 
     Route::middleware(['role:super_admin'])->group(function () {
-        Route::get('/audit-logs', [\App\Http\Controllers\Admin\AuditLogController::class, 'index'])
+        Route::get('/audit-logs', [AuditLogController::class, 'index'])
             ->name('audit-logs.index');
     });
 

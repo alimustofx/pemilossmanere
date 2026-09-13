@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Election extends Model
 {
     use HasFactory;
+
     protected $fillable = ['name', 'type', 'status', 'starts_at', 'ends_at'];
 
     protected $casts = [

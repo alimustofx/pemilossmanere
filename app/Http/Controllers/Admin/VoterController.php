@@ -20,7 +20,7 @@ class VoterController extends Controller
                 $search = $request->input('search');
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('nis', 'like', "%{$search}%");
+                        ->orWhere('nis', 'like', "%{$search}%");
                 });
             })
             ->orderBy('class_name')
@@ -53,6 +53,7 @@ class VoterController extends Controller
         while (($row = fgetcsv($handle)) !== false) {
             if (count($row) < 4) {
                 $skipped++;
+
                 continue;
             }
 
@@ -60,6 +61,7 @@ class VoterController extends Controller
 
             if (empty($nis) || empty($nama) || empty($kelas) || empty($tanggalLahir)) {
                 $skipped++;
+
                 continue;
             }
 
@@ -90,7 +92,7 @@ class VoterController extends Controller
 
     public function export()
     {
-        $voters = \App\Models\Voter::orderBy('class_name')->orderBy('name')->get();
+        $voters = Voter::orderBy('class_name')->orderBy('name')->get();
 
         $callback = function () use ($voters) {
             $file = fopen('php://output', 'w');
@@ -120,7 +122,7 @@ class VoterController extends Controller
         ]);
 
         AuditLogger::log(
-            "Mengubah status pemilih: {$voter->name} menjadi " .
+            "Mengubah status pemilih: {$voter->name} menjadi ".
             ($voter->status ? 'aktif' : 'nonaktif')
         );
 

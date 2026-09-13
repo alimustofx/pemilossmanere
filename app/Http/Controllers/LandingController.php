@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Election;
 use App\Models\Announcement;
+use App\Models\Election;
 use Inertia\Inertia;
 
 class LandingController extends Controller

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Voter;
 use App\Models\Election;
 use App\Models\Vote;
+use App\Models\Voter;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -52,9 +52,10 @@ class DashboardController extends Controller
             'mpkResult' => $mpkResult,
         ]);
     }
+
     public function exportResults()
     {
-        $data = \App\Models\Vote::selectRaw('election_id, candidate_group_id, count(*) as total')
+        $data = Vote::selectRaw('election_id, candidate_group_id, count(*) as total')
             ->groupBy('election_id', 'candidate_group_id')
             ->with(['election:id,name,type', 'candidateGroup:id,nama_kelompok'])
             ->get();

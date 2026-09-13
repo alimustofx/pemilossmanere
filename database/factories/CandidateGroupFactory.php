@@ -19,7 +19,7 @@ class CandidateGroupFactory extends Factory
     {
         return [
             'nomor_urut' => fake()->numberBetween(1, 5),
-            'nama_kelompok' => fake()->name() . ' & ' . fake()->name(),
+            'nama_kelompok' => fake()->name().' & '.fake()->name(),
             'model' => 'pair',
         ];
     }

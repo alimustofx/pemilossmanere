@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\CandidateGroup;
 use App\Models\Candidate;
+use App\Models\CandidateGroup;
 use App\Models\CandidateProgram;
 use App\Models\Election;
 use App\Support\AuditLogger;

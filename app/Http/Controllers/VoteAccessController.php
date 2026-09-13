@@ -20,14 +20,14 @@ class VoteAccessController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'class_name'    => 'required|string',
-            'nis'           => 'required|string',
+            'class_name' => 'required|string',
+            'nis' => 'required|string',
             'tanggal_lahir' => 'required|date',
         ]);
 
         // Batasi percobaan berdasarkan NIS,
         // bukan berdasarkan IP address.
-        $key = 'vote-access:' . $validated['nis'];
+        $key = 'vote-access:'.$validated['nis'];
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
@@ -64,10 +64,10 @@ class VoteAccessController extends Controller
         $rawToken = Str::random(64);
 
         VoterSession::create([
-            'voter_id'           => $voter->id,
+            'voter_id' => $voter->id,
             'session_token_hash' => hash('sha256', $rawToken),
-            'expires_at'         => now()->addHours(2),
-            'last_activity_at'   => now(),
+            'expires_at' => now()->addHours(2),
+            'last_activity_at' => now(),
         ]);
 
         $cookie = cookie(

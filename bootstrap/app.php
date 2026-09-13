@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureRole;
+use App\Http\Middleware\EnsureVoterSession;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -18,8 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Daftarkan alias middleware
         $middleware->alias([
-            'voter.session' => \App\Http\Middleware\EnsureVoterSession::class,
-            'role' => \App\Http\Middleware\EnsureRole::class,
+            'voter.session' => EnsureVoterSession::class,
+            'role' => EnsureRole::class,
         ]);
 
         $middleware->encryptCookies(except: [
@@ -35,8 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) =>
-                $request->is('api/*') || $request->expectsJson(),
+            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
     })
     ->create();

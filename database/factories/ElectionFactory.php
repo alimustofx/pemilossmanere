@@ -18,7 +18,7 @@ class ElectionFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Pemilihan ' . fake()->word(),
+            'name' => 'Pemilihan '.fake()->word(),
             'type' => 'osis',
             'status' => 'draft',
         ];

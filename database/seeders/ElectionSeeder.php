@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Election;
-use App\Models\CandidateGroup;
 use App\Models\Candidate;
+use App\Models\CandidateGroup;
 use App\Models\CandidateProgram;
+use App\Models\Election;
 use Illuminate\Database\Seeder;
 
 class ElectionSeeder extends Seeder

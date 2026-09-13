@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Voter extends Model
 {
     use HasFactory;
+
     protected $fillable = ['nis', 'name', 'class_name', 'tanggal_lahir', 'status', 'osis_voted_at', 'mpk_voted_at'];
 
     protected $casts = [

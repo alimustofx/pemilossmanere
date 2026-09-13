@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Election;
 use App\Support\AuditLogger;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ElectionController extends Controller

@@ -1,9 +1,10 @@
 <?php
 
-use App\Models\Voter;
-use App\Models\Election;
 use App\Models\CandidateGroup;
+use App\Models\Election;
 use App\Models\Vote;
+use App\Models\Voter;
+use Illuminate\Support\Str;
 
 test('voter tidak bisa vote dua kali di pemilihan yang sama', function () {
     $voter = Voter::factory()->create(['osis_voted_at' => now()]);
@@ -26,7 +27,7 @@ test('vote tersimpan dan tidak menyimpan voter_id (kerahasiaan)', function () {
     Vote::create([
         'election_id' => $election->id,
         'candidate_group_id' => $group->id,
-        'vote_hash' => \Illuminate\Support\Str::uuid(),
+        'vote_hash' => Str::uuid(),
         'created_at' => now(),
     ]);
 
