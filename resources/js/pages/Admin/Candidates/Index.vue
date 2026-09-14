@@ -184,15 +184,18 @@ function destroy(group) {
 
                 <div class="candidate-card__body">
                     <p class="candidate-card__label">Pasangan Calon</p>
-                      <div class="candidate-card__photos" v-if="group.candidates.some(c => c.photo)">
+                    <div
+                        class="candidate-card__photos"
+                        v-if="group.candidates.some((c) => c.photo)"
+                    >
                         <img
-                          v-for="c in group.candidates"
-                          :key="c.id"
-                          :src="c.photo ? `/storage/${c.photo}` : ''"
-                          :alt="c.name"
-                          class="candidate-card__photo"
+                            v-for="c in group.candidates"
+                            :key="c.id"
+                            :src="c.photo ? `/storage/${c.photo}` : ''"
+                            :alt="c.name"
+                            class="candidate-card__photo"
                         />
-                      </div>
+                    </div>
 
                     <h3 class="candidate-card__name">
                         {{ group.nama_kelompok }}

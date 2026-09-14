@@ -149,25 +149,41 @@ const misiList = computed(() => {
                             <span class="nav__menu-arrow">↗</span>
                         </a>
 
-                        <a href="/pengumuman" class="nav__menu-link" @click="closeMenu">
+                        <a
+                            href="/pengumuman"
+                            class="nav__menu-link"
+                            @click="closeMenu"
+                        >
                             <span class="nav__menu-number">02</span>
                             <span class="nav__menu-text"> Pengumuman </span>
                             <span class="nav__menu-arrow">↗</span>
                         </a>
 
-                        <a href="/hasil/osis" class="nav__menu-link" @click="closeMenu">
+                        <a
+                            href="/hasil/osis"
+                            class="nav__menu-link"
+                            @click="closeMenu"
+                        >
                             <span class="nav__menu-number">03</span>
                             <span class="nav__menu-text"> Hasil OSIS </span>
                             <span class="nav__menu-arrow">↗</span>
                         </a>
 
-                        <a href="/hasil/mpk" class="nav__menu-link" @click="closeMenu">
+                        <a
+                            href="/hasil/mpk"
+                            class="nav__menu-link"
+                            @click="closeMenu"
+                        >
                             <span class="nav__menu-number">04</span>
                             <span class="nav__menu-text"> Hasil MPK </span>
                             <span class="nav__menu-arrow">↗</span>
                         </a>
 
-                        <a href="/vote/access" class="nav__menu-link" @click="closeMenu">
+                        <a
+                            href="/vote/access"
+                            class="nav__menu-link"
+                            @click="closeMenu"
+                        >
                             <span class="nav__menu-number">05</span>
                             <span class="nav__menu-text"> Mulai memilih </span>
                             <span class="nav__menu-arrow">↗</span>
@@ -292,9 +308,7 @@ const misiList = computed(() => {
 
                                 <div
                                     class="candidate-card__photos"
-                                    v-if="
-                                        group.candidates.some((c) => c.photo)
-                                    "
+                                    v-if="group.candidates.some((c) => c.photo)"
                                 >
                                     <img
                                         v-for="c in group.candidates"
