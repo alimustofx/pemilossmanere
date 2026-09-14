@@ -145,57 +145,31 @@ const misiList = computed(() => {
                     <nav class="nav__menu-links">
                         <a href="/" class="nav__menu-link" @click="closeMenu">
                             <span class="nav__menu-number">01</span>
-
                             <span class="nav__menu-text"> Beranda </span>
-
                             <span class="nav__menu-arrow">↗</span>
                         </a>
 
-                        <a
-                            href="/pengumuman"
-                            class="nav__menu-link"
-                            @click="closeMenu"
-                        >
+                        <a href="/pengumuman" class="nav__menu-link" @click="closeMenu">
                             <span class="nav__menu-number">02</span>
-
                             <span class="nav__menu-text"> Pengumuman </span>
-
                             <span class="nav__menu-arrow">↗</span>
                         </a>
 
-                        <a
-                            href="/hasil/osis"
-                            class="nav__menu-link"
-                            @click="closeMenu"
-                        >
+                        <a href="/hasil/osis" class="nav__menu-link" @click="closeMenu">
                             <span class="nav__menu-number">03</span>
-
                             <span class="nav__menu-text"> Hasil OSIS </span>
-
                             <span class="nav__menu-arrow">↗</span>
                         </a>
 
-                        <a
-                            href="/hasil/mpk"
-                            class="nav__menu-link"
-                            @click="closeMenu"
-                        >
+                        <a href="/hasil/mpk" class="nav__menu-link" @click="closeMenu">
                             <span class="nav__menu-number">04</span>
-
                             <span class="nav__menu-text"> Hasil MPK </span>
-
                             <span class="nav__menu-arrow">↗</span>
                         </a>
 
-                        <a
-                            href="/vote/access"
-                            class="nav__menu-link"
-                            @click="closeMenu"
-                        >
+                        <a href="/vote/access" class="nav__menu-link" @click="closeMenu">
                             <span class="nav__menu-number">05</span>
-
                             <span class="nav__menu-text"> Mulai memilih </span>
-
                             <span class="nav__menu-arrow">↗</span>
                         </a>
                     </nav>
@@ -316,6 +290,25 @@ const misiList = computed(() => {
                                     Pasangan Calon
                                 </p>
 
+                                <div
+                                    class="candidate-card__photos"
+                                    v-if="
+                                        group.candidates.some((c) => c.photo)
+                                    "
+                                >
+                                    <img
+                                        v-for="c in group.candidates"
+                                        :key="c.id"
+                                        :src="
+                                            c.photo
+                                                ? `/storage/${c.photo}`
+                                                : '/images/avatar-placeholder.png'
+                                        "
+                                        :alt="c.name"
+                                        class="candidate-card__photo"
+                                    />
+                                </div>
+
                                 <h2 class="candidate-card__name">
                                     {{ group.nama_kelompok }}
                                 </h2>
@@ -396,6 +389,12 @@ const misiList = computed(() => {
                         <!-- PEOPLE -->
                         <div class="detail__people">
                             <div class="person">
+                                <img
+                                    v-if="ketua?.photo"
+                                    :src="`/storage/${ketua.photo}`"
+                                    :alt="ketua.name"
+                                    class="person__photo"
+                                />
                                 <span class="person__role"> Ketua </span>
 
                                 <strong class="person__name">
@@ -404,6 +403,12 @@ const misiList = computed(() => {
                             </div>
 
                             <div class="person">
+                                <img
+                                    v-if="wakil?.photo"
+                                    :src="`/storage/${wakil.photo}`"
+                                    :alt="wakil.name"
+                                    class="person__photo"
+                                />
                                 <span class="person__role"> Wakil </span>
 
                                 <strong class="person__name">
@@ -1258,6 +1263,24 @@ const misiList = computed(() => {
     text-transform: uppercase;
 }
 
+/* ---- FOTO KANDIDAT (list) — diperbesar 2x ---- */
+
+.candidate-card__photos {
+    display: flex;
+    gap: 12px;
+
+    margin-bottom: 16px;
+}
+
+.candidate-card__photo {
+    width: 156px;
+    height: 156px;
+
+    object-fit: cover;
+
+    border: 1px solid var(--line);
+}
+
 .candidate-card__name {
     margin: 0;
 
@@ -1471,6 +1494,19 @@ const misiList = computed(() => {
 
 .person + .person {
     border-left: 1px solid var(--line);
+}
+
+/* ---- FOTO KANDIDAT (detail) — diperbesar 2x ---- */
+
+.person__photo {
+    width: 192px;
+    height: 192px;
+
+    object-fit: cover;
+
+    border: 1px solid var(--line);
+
+    margin-bottom: 6px;
 }
 
 .person__role {
@@ -2080,6 +2116,11 @@ const misiList = computed(() => {
         font-size: 27px;
     }
 
+    .candidate-card__photo {
+        width: 84px;
+        height: 84px;
+    }
+
     .detail__back {
         margin-bottom: 32px;
     }
@@ -2116,6 +2157,11 @@ const misiList = computed(() => {
     .person {
         min-height: 82px;
         padding: 18px 0;
+    }
+
+    .person__photo {
+        width: 96px;
+        height: 96px;
     }
 
     .person + .person {
@@ -2237,6 +2283,11 @@ const misiList = computed(() => {
         padding-right: 18px;
     }
 
+    .candidate-card__photo {
+        width: 72px;
+        height: 72px;
+    }
+
     .candidate-card__people {
         grid-template-columns: 1fr;
         gap: 13px;
@@ -2244,6 +2295,11 @@ const misiList = computed(() => {
 
     .candidate-card__bottom {
         padding: 0 17px;
+    }
+
+    .person__photo {
+        width: 80px;
+        height: 80px;
     }
 
     .detail__heading h1 {

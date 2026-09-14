@@ -184,6 +184,15 @@ function destroy(group) {
 
                 <div class="candidate-card__body">
                     <p class="candidate-card__label">Pasangan Calon</p>
+                      <div class="candidate-card__photos" v-if="group.candidates.some(c => c.photo)">
+                        <img
+                          v-for="c in group.candidates"
+                          :key="c.id"
+                          :src="c.photo ? `/storage/${c.photo}` : ''"
+                          :alt="c.name"
+                          class="candidate-card__photo"
+                        />
+                      </div>
 
                     <h3 class="candidate-card__name">
                         {{ group.nama_kelompok }}
@@ -853,6 +862,22 @@ function destroy(group) {
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+}
+
+.candidate-card__photos {
+    display: flex;
+    gap: 8px;
+
+    margin-bottom: 14px;
+}
+
+.candidate-card__photo {
+    width: 52px;
+    height: 52px;
+
+    object-fit: cover;
+
+    border: 1px solid var(--line);
 }
 
 .candidate-card__name {
