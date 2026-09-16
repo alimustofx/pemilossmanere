@@ -278,6 +278,19 @@ onUnmounted(() => {
                                     Pilih kelas atau status
                                 </option>
 
+                                <optgroup label="Guru & Tenaga Kependidikan">
+                                    <option value="GTK ASN">GTK ASN</option>
+                                    <option value="GTK NON ASN">
+                                        GTK Non ASN
+                                    </option>
+                                </optgroup>
+
+                                <optgroup label="Mahasiswa">
+                                    <option value="MAHASISWA">
+                                        Mahasiswa UM Mengajar
+                                    </option>
+                                </optgroup>
+
                                 <optgroup label="Kelas X">
                                     <option
                                         v-for="item in kelasSiswa.filter(
@@ -311,19 +324,6 @@ onUnmounted(() => {
                                         :value="item"
                                     >
                                         {{ item }}
-                                    </option>
-                                </optgroup>
-
-                                <optgroup label="Guru & Tenaga Kependidikan">
-                                    <option value="GTK ASN">GTK ASN</option>
-                                    <option value="GTK NON ASN">
-                                        GTK Non ASN
-                                    </option>
-                                </optgroup>
-
-                                <optgroup label="Mahasiswa">
-                                    <option value="MAHASISWA">
-                                        Mahasiswa UM Mengajar
                                     </option>
                                 </optgroup>
                             </select>

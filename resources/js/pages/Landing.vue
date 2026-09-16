@@ -248,9 +248,9 @@ onUnmounted(() => {
                 </p>
 
                 <h1 class="hero__title">
-                    Satu suara menentukan
-                    <em>arah</em>
-                    sekolah kita.
+                    Suara kita untuk
+                    <em>perubahan</em>
+                    bersama.
                 </h1>
 
                 <p class="hero__desc">
