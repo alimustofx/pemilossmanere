@@ -7,7 +7,6 @@ use App\Models\VoterSession;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -27,18 +26,6 @@ class VoteAccessController extends Controller
             'tanggal_lahir' => 'required|date',
         ]);
 
-        // Batasi percobaan berdasarkan NIS,
-        // bukan berdasarkan IP address.
-        $key = 'vote-access:'.$validated['nis'];
-
-        if (RateLimiter::tooManyAttempts($key, 15)) {
-            $seconds = RateLimiter::availableIn($key);
-
-            return back()->withErrors([
-                'nis' => "Terlalu banyak percobaan. Coba lagi dalam {$seconds} detik.",
-            ]);
-        }
-
         $voter = Voter::where('nis', $validated['nis'])
             ->where('class_name', $validated['class_name'])
             ->whereDate('tanggal_lahir', $validated['tanggal_lahir'])
@@ -46,15 +33,10 @@ class VoteAccessController extends Controller
             ->first();
 
         if (! $voter) {
-            RateLimiter::hit($key, 10);
-
             return back()->withErrors([
                 'nis' => 'Data tidak ditemukan atau tidak aktif. Periksa kembali kelas, NIS, dan tanggal lahir.',
             ]);
         }
-
-        // Login berhasil, reset counter percobaan.
-        RateLimiter::clear($key);
 
         if ($voter->osis_voted_at && $voter->mpk_voted_at) {
             return back()->withErrors([
