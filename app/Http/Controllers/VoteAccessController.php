@@ -31,7 +31,7 @@ class VoteAccessController extends Controller
         // bukan berdasarkan IP address.
         $key = 'vote-access:'.$validated['nis'];
 
-        if (RateLimiter::tooManyAttempts($key, 5)) {
+        if (RateLimiter::tooManyAttempts($key, 15)) {
             $seconds = RateLimiter::availableIn($key);
 
             return back()->withErrors([
@@ -46,7 +46,7 @@ class VoteAccessController extends Controller
             ->first();
 
         if (! $voter) {
-            RateLimiter::hit($key, 60);
+            RateLimiter::hit($key, 10);
 
             return back()->withErrors([
                 'nis' => 'Data tidak ditemukan atau tidak aktif. Periksa kembali kelas, NIS, dan tanggal lahir.',

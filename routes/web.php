@@ -188,7 +188,6 @@ Route::get('/vote/access', [VoteAccessController::class, 'show'])
     ->name('vote.access');
 
 Route::post('/vote/access', [VoteAccessController::class, 'store'])
-    ->middleware('throttle:5,1')
     ->name('vote.access.store');
 
 /*
